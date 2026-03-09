@@ -1,0 +1,13 @@
+# Robots.txt for Eringlen Wellness
+# Allow all search engines to crawl the entire website
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+# Sitemaps
+Sitemap: https://www.eringleenmassage.com/sitemap.xml
+
+# Crawl delay (optional - adjust as needed)
+Crawl-delay: 1
