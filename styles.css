@@ -216,9 +216,108 @@ body {
     border-radius: 2px;
 }
 
+/* ========== PRICING SECTION ========== */
+.pricing-subtitle {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-top: 30px;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+.price-card {
+    background: linear-gradient(135deg, var(--accent-color), #e8b866);
+    padding: 35px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(212, 165, 116, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.price-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    pointer-events: none;
+}
+
+.price-card:hover {
+    transform: translateY(-15px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(212, 165, 116, 0.5);
+}
+
+.price-card .duration {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.price-card .price {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.price-card p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.6;
+    margin: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.price-card.add-on-card {
+    background: linear-gradient(135deg, var(--primary-color), #3d7a52);
+    grid-column: 1 / -1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.price-card.add-on-card .add-on {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.price-card.add-on-card .add-on-price {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--accent-color);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.price-card.add-on-card .add-on-price:last-child {
+    margin-bottom: 0;
+}
+
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
     margin-top: 40px;
 }
@@ -655,6 +754,84 @@ body {
 .appointments-content {
     display: block;
     margin-top: 40px;
+}
+
+/* ========== AVAILABILITY SECTION ========== */
+.availability-section {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 40px;
+}
+
+.availability-section h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.availability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.availability-item {
+    background: linear-gradient(135deg, var(--accent-color), #e8b866);
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.availability-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(212, 165, 116, 0.4);
+    border-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.availability-item.contact-for-availability {
+    background: linear-gradient(135deg, #e0e0e0, #f0f0f0);
+    color: var(--primary-color);
+}
+
+.availability-item.contact-for-availability:hover {
+    background: linear-gradient(135deg, #d0d0d0, #e8e8e8);
+    box-shadow: 0 8px 25px rgba(45, 90, 61, 0.3);
+    border-color: var(--accent-color);
+}
+
+.availability-item .day {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.availability-item.contact-for-availability .day {
+    color: var(--primary-color);
+}
+
+.availability-item .time {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.availability-item.contact-for-availability .time {
+    color: var(--primary-color);
+    font-style: italic;
 }
 
 .calendar-section,
@@ -1115,8 +1292,20 @@ iframe {
         font-size: 2rem;
     }
 
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .price-card.add-on-card {
+        grid-column: 1 / -1;
+    }
+
     .services-grid {
         grid-template-columns: 1fr;
+    }
+
+    .availability-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .about-content {
@@ -1226,6 +1415,26 @@ iframe {
 
     .services-grid {
         grid-template-columns: 1fr;
+    }
+
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .price-card {
+        padding: 25px;
+    }
+
+    .price-card .price {
+        font-size: 2rem;
+    }
+
+    .availability-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .availability-item {
+        padding: 20px;
     }
 
     .service-card {

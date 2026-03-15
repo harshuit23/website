@@ -50,6 +50,7 @@
                 <li><a href="#home" class="nav-link">Home</a></li>
                 <li><a href="#services" class="nav-link">Services</a></li>
                 <li><a href="#insurance" class="nav-link">Insurance</a></li>
+                <li><a href="forms.html" class="nav-link">Forms</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#appointments" class="nav-link">Book Appointment</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
@@ -76,7 +77,10 @@
     <section class="services" id="services">
         <div class="container">
             <h2 class="section-title">Our Services</h2>
+ 
+
             <div class="services-grid">
+                
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-hand-holding-heart"></i>
@@ -108,6 +112,49 @@
                     <h3>Cupping Therapy</h3>
                     <p>Uses suction to stimulate blood flow and promote healing. Can help with muscle tension, pain, and circulation.</p>
                     
+                </div>
+            </div>
+                       <h3 class="pricing-subtitle">Massage Therapy Rates</h3>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <div class="duration">30 Minutes</div>
+                    <div class="price">$70</div>
+                    <p>Swedish & Deep Tissue</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">45 Minutes</div>
+                    <div class="price">$90</div>
+                    <p>Swedish & Deep Tissue</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">60 Minutes</div>
+                    <div class="price">$108</div>
+                    <p>Swedish & Deep Tissue</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">90 Minutes</div>
+                    <div class="price">$150</div>
+                    <p>Swedish & Deep Tissue</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">Hot Stone - 60 Minutes</div>
+                    <div class="price">$138</div>
+                    <p>Hot Stone Therapy</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">Hot Stone - 90 Minutes</div>
+                    <div class="price">$195</div>
+                    <p>Hot Stone Therapy</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">Cupping - 60 Minutes</div>
+                    <div class="price">$128</div>
+                    <p>Cupping Therapy</p>
+                </div>
+                <div class="price-card">
+                    <div class="duration">Cupping - 90 Minutes</div>
+                    <div class="price">$180</div>
+                    <p>Cupping Therapy</p>
                 </div>
             </div>
         </div>
@@ -211,6 +258,41 @@ Dedicated to improving the quality of life for every client, our therapist focus
     <section class="appointments" id="appointments">
         <div class="container">
             <h2 class="section-title">Book Your Appointment</h2>
+            
+            <div class="availability-section">
+                <h3>General Availability</h3>
+                <div class="availability-grid">
+                    <div class="availability-item">
+                        <div class="day">Monday</div>
+                        <div class="time">10:00 AM - 2:00 PM</div>
+                    </div>
+                    <div class="availability-item">
+                        <div class="day">Tuesday</div>
+                        <div class="time">10:00 AM - 8:00 PM</div>
+                    </div>
+                    <div class="availability-item">
+                        <div class="day">Wednesday</div>
+                        <div class="time">5:00 PM - 8:00 PM</div>
+                    </div>
+                    <div class="availability-item">
+                        <div class="day">Thursday</div>
+                        <div class="time">10:00 AM - 2:00 PM</div>
+                    </div>
+                    <div class="availability-item">
+                        <div class="day">Friday</div>
+                        <div class="time">10:00 AM - 11:00 AM</div>
+                    </div>
+                    <a href="#contact" class="availability-item contact-for-availability">
+                        <div class="day">Saturday</div>
+                        <div class="time">Please contact us</div>
+                    </a>
+                    <a href="#contact" class="availability-item contact-for-availability">
+                        <div class="day">Sunday</div>
+                        <div class="time">Please contact us</div>
+                    </a>
+                </div>
+            </div>
+            
             <div class="appointments-content">
                 <div class="booking-form-section">
                     <h3>Appointment Details</h3>
@@ -238,17 +320,9 @@ Dedicated to improving the quality of life for every client, our therapist focus
                         <div class="form-group">
                             <label for="apptTime">Preferred Time *</label>
                             <select id="apptTime" name="time" required>
-                                <option value="">Select a time slot</option>
-                                <option value="9:00 AM">9:00 AM</option>
-                                <option value="9:30 AM">9:30 AM</option>
-                                <option value="10:00 AM">10:00 AM</option>
-                                <option value="10:30 AM">10:30 AM</option>
-                                <option value="11:00 AM">11:00 AM</option>
-                                <option value="11:30 AM">11:30 AM</option>
-                                <option value="7:00 PM">7:00 PM</option>
-                                <option value="7:30 PM">7:30 PM</option>
-                                <option value="8:00 PM">8:00 PM</option>
+                                <option value="">Select a date first to see available times</option>
                             </select>
+                            <small id="availabilityNote" style="color: var(--text-light); margin-top: 5px; display: block;"></small>
                         </div>
 
                         <div class="form-group">
@@ -258,6 +332,7 @@ Dedicated to improving the quality of life for every client, our therapist focus
                                 <option value="Swedish Massage">Swedish Massage</option>
                                 <option value="Deep Tissue Massage">Deep Tissue Massage</option>
                                 <option value="Hot Stone Therapy">Hot Stone Therapy</option>
+                                <option value="Cupping Therapy">Cupping Therapy</option>
                             </select>
                         </div>
 
@@ -336,6 +411,60 @@ Dedicated to improving the quality of life for every client, our therapist focus
     
     <!-- Appointment Booking Script -->
     <script>
+    // Availability schedule based on day of week
+    const availabilitySchedule = {
+        0: { name: 'Sunday', times: [], special: true, note: 'Please contact us for availability' },
+        1: { name: 'Monday', times: ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM'] },
+        2: { name: 'Tuesday', times: ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM'] },
+        3: { name: 'Wednesday', times: ['5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM'] },
+        4: { name: 'Thursday', times: ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM'] },
+        5: { name: 'Friday', times: ['10:00 AM', '10:30 AM'] },
+        6: { name: 'Saturday', times: [], special: true, note: 'Please contact us for availability' }
+    };
+
+    // Update available times when date is selected
+    document.getElementById('apptDate').addEventListener('change', function() {
+        // Parse date string and convert to Toronto timezone (America/Toronto)
+        const [year, month, day] = this.value.split('-');
+        const utcDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+        
+        // Get day of week in Toronto timezone
+        const torontoDateStr = utcDate.toLocaleString('en-US', {
+            timeZone: 'America/Toronto',
+            weekday: 'long'
+        });
+        
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayOfWeek = dayNames.indexOf(torontoDateStr.split(',')[0]);
+        const schedule = availabilitySchedule[dayOfWeek];
+        
+        const timeSelect = document.getElementById('apptTime');
+        const availabilityNote = document.getElementById('availabilityNote');
+        
+        // Clear existing options except the first one
+        timeSelect.innerHTML = '';
+        
+        if (schedule.special) {
+            // Weekend or special day
+            timeSelect.innerHTML = `<option value="">${schedule.note}</option>`;
+            availabilityNote.textContent = `${schedule.name}: ${schedule.note}`;
+            timeSelect.disabled = true;
+        } else {
+            // Regular day with available times
+            timeSelect.innerHTML = `<option value="">Select a time slot (${schedule.name})</option>`;
+            
+            schedule.times.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                timeSelect.appendChild(option);
+            });
+            
+            timeSelect.disabled = false;
+            availabilityNote.textContent = `${schedule.name}: ${schedule.times[0]} - ${schedule.times[schedule.times.length - 1]}`;
+        }
+    });
+
     function submitAppointment(event) {
         event.preventDefault();
         
