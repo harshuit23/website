@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eringlenwellness – Massage Treatment Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1a1a1a;
+      --rule:      #09101d;
+      --muted:     #555;
+      --field-bg:  #fafafa;
+      --border:    #b0b8c4;
+      --accent:    #09101d;
+      --page-bg:   #f0ede8;
+      --paper:     #ffffff;
+      --serif:     'EB Garamond', Georgia, serif;
+      --sans:      'Lato', sans-serif;
+    }
+
+    body {
+      background: var(--page-bg);
+      font-family: var(--serif);
+      font-size: 10.5pt;
+      color: var(--ink);
+      padding: 28px 16px 60px;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    /* ── PAPER SHEET ── */
+    .page {
+      background: var(--paper);
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 36px 48px 48px;
+      box-shadow: 0 4px 32px rgba(0,0,0,.15);
+      border-top: 5px solid var(--rule);
+    }
+
+    /* ── PRINT / SUBMIT BAR ── */
+    .toolbar {
+      max-width: 780px;
+      margin: 0 auto 14px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .toolbar button {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: opacity .15s;
+    }
+    .btn-print  { background: var(--rule); color: #fff; }
+    .btn-clear  { background: transparent; color: var(--rule); border: 1.5px solid var(--rule); }
+    .toolbar button:hover { opacity: .8; }
+
+    /* ── TITLE ── */
+    .form-title {
+      font-family: var(--serif);
+      font-size: 14pt;
+      font-weight: 700;
+      text-align: center;
+      border-bottom: 2px solid var(--rule);
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+      letter-spacing: .02em;
+    }
+
+    /* ── FIELD ROWS ── */
+    .field-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      line-height: 1.9;
+    }
+    .field-row .lbl {
+      font-weight: 700;
+      white-space: nowrap;
+      margin-right: 4px;
+      font-size: 10.5pt;
+    }
+    .field-row input[type="text"],
+    .field-row input[type="date"] {
+      border: none;
+      border-bottom: 1.5px solid var(--rule);
+      background: transparent;
+      font-family: var(--serif);
+      font-size: 10.5pt;
+      color: var(--ink);
+      outline: none;
+      padding: 1px 4px;
+      flex: 1;
+      min-width: 80px;
+    }
+    .field-row input[type="date"] { min-width: 120px; max-width: 160px; }
+    .field-row .sep { width: 16px; flex-shrink: 0; }
+
+    /* consent radio */
+    .consent-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .consent-wrap .lbl { font-weight: 700; margin-right: 6px; }
+    .radio-group { display: flex; gap: 18px; }
+    .radio-group label {
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--sans); font-size: 10pt; cursor: pointer;
+    }
+    .radio-group input[type="radio"] { accent-color: var(--rule); width: 14px; height: 14px; }
+
+    /* ── INSTRUCTION TEXT ── */
+    .instruction {
+      font-size: 9.5pt;
+      line-height: 1.65;
+      color: var(--muted);
+      border-left: 3px solid var(--rule);
+      padding: 8px 12px;
+      background: #f6f5f2;
+      margin: 14px 0 18px;
+      font-style: italic;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-head {
+      font-weight: 700;
+      font-size: 10.5pt;
+      margin: 20px 0 8px;
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+    }
+    .section-num {
+      font-size: 11pt;
+      font-weight: 700;
+      min-width: 16px;
+    }
+
+    /* ── CHECKBOX ITEMS ── */
+    .check-list {
+      list-style: none;
+      padding: 0 0 0 20px;
+      margin-bottom: 8px;
+    }
+    .check-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 10.5pt;
+      line-height: 1.5;
+    }
+    .check-list input[type="checkbox"] {
+      accent-color: var(--rule);
+      width: 13px; height: 13px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .check-detail {
+      flex: 1;
+      border: none;
+      border-bottom: 1px dashed var(--border);
+      background: transparent;
+      font-family: var(--serif);
+      font-size: 10pt;
+      color: var(--ink);
+      outline: none;
+      padding: 0 4px;
+      min-width: 0;
+    }
+
+    /* ── BOX FIELDS (large bordered text areas) ── */
+    .box-field {
+      border: 1.5px solid var(--rule);
+      width: 100%;
+      margin: 6px 0 14px;
+      padding: 0;
+      background: var(--field-bg);
+      position: relative;
+    }
+    .box-field textarea {
+      width: 100%;
+      min-height: 90px;
+      border: none;
+      background: transparent;
+      resize: vertical;
+      font-family: var(--serif);
+      font-size: 10.5pt;
+      color: var(--ink);
+      padding: 8px 10px;
+      outline: none;
+      line-height: 1.7;
+    }
+
+    /* sub-label inside treatment */
+    .sub-label {
+      font-weight: 700;
+      font-size: 10.5pt;
+      margin: 14px 0 4px;
+    }
+
+    /* ── INSTRUCTOR SECTION ── */
+    .instructor-block {
+      margin-top: 22px;
+    }
+    .sig-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      margin-top: 32px;
+    }
+    .sig-row .sig-line {
+      flex: 1;
+      border-bottom: 1.5px solid var(--rule);
+      min-height: 24px;
+    }
+    .sig-row .sig-label {
+      font-family: var(--sans);
+      font-size: 8.5pt;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .sig-spacer { width: 40px; flex-shrink: 0; }
+
+    /* ── DIVIDER ── */
+    hr.rule {
+      border: none;
+      border-top: 1px solid #d0ccc5;
+      margin: 16px 0;
+    }
+
+    /* ── SIGNATURE PAD ── */
+    .sig-pad-wrap {
+      margin-top: 20px;
+    }
+    .sig-pad-label {
+      font-family: var(--sans);
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .sig-pad-box {
+      position: relative;
+      border: 1.5px solid var(--rule);
+      background: #fdfdfc;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .sig-pad-box canvas {
+      display: block;
+      width: 100%;
+      height: 130px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .sig-pad-box .sig-watermark {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      font-family: var(--serif);
+      font-size: 11pt;
+      font-style: italic;
+      color: #ccc;
+      letter-spacing: .04em;
+      transition: opacity .2s;
+    }
+    .sig-pad-box.has-sig .sig-watermark { opacity: 0; }
+    .sig-pad-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .sig-status {
+      font-family: var(--sans);
+      font-size: 9pt;
+      color: #27a06a;
+    }
+    .sig-btn {
+      font-family: var(--sans);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: 1.5px solid var(--rule);
+      background: transparent;
+      color: var(--rule);
+      transition: background .15s, color .15s;
+    }
+    .sig-btn:hover { background: var(--rule); color: #fff; }
+    .sig-btn.primary { background: var(--rule); color: #fff; }
+    .sig-btn.primary:hover { opacity: .8; }
+    .sig-saved-img {
+      display: none;
+      border: 1.5px solid var(--rule);
+      border-radius: 2px;
+      width: 100%;
+      max-height: 130px;
+      object-fit: contain;
+      background: #fdfdfc;
+    }
+    .sig-saved-label {
+      font-family: var(--sans);
+      font-size: 8.5pt;
+      color: #27a06a;
+      margin-top: 4px;
+      display: none;
+    }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .toolbar { display: none; }
+      .page { box-shadow: none; border-top: 5px solid #000; max-width: 100%; padding: 18px 28px 30px; }
+      .box-field textarea { min-height: 80px; }
+      input, textarea { background: transparent !important; }
+      .sig-pad-box      { display: none !important; }
+      .sig-pad-controls { display: none !important; }
+      .sig-status       { display: none !important; }
+      .sig-print-area   { display: block !important; }
+    }
+
+    /* Snapshot container — hidden on screen, shown on print */
+    .sig-print-area {
+      display: none;
+      border: 1.5px solid #09101d;
+      border-radius: 2px;
+      width: 100%;
+      height: 130px;
+      background: #fdfdfc;
+    }
+    .sig-print-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <button class="btn-clear" onclick="clearForm()">Clear Form</button>
+  <button class="btn-print" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<!-- Paper -->
+<div class="page">
+
+  <div class="form-title">Eringlenwellness&nbsp;&mdash;&nbsp;Massage Treatment Notes</div>
+
+  <!-- Row 1: Patient Name | Therapist | Date -->
+  <div class="field-row">
+    <span class="lbl">Patient Name:</span>
+    <input type="text" id="patientName" name="patientName" placeholder="Full name" style="flex:2.2; min-width:140px;" autocomplete="name"/>
+    <span class="sep"></span>
+    <span class="lbl">Therapist:</span>
+    <input type="text" id="therapist" name="therapist" placeholder="Therapist name" style="flex:2; min-width:120px;"/>
+    <span class="sep"></span>
+    <span class="lbl">Date:</span>
+    <input type="date" id="treatDate" name="treatDate"/>
+  </div>
+
+  <!-- Row 2: Service | Duration | Consent -->
+  <div class="field-row" style="align-items:center; gap:6px;">
+    <span class="lbl">Service:</span>
+    <input type="text" id="service" name="service" placeholder="e.g. Swedish Massage" style="flex:1.8; min-width:120px;"/>
+    <span class="sep"></span>
+    <span class="lbl">Duration:</span>
+    <input type="text" id="duration" name="duration" placeholder="e.g. 60 min" style="flex:.9; min-width:80px;"/>
+    <span class="sep" style="width:20px;"></span>
+    <div class="consent-wrap" style="flex-shrink:0;">
+      <span class="lbl" style="white-space:nowrap;">Consent to Assess, Treat &amp; Self Care Provided:</span>
+      <div class="radio-group">
+        <label><input type="radio" name="consent" value="yes"/> Yes</label>
+        <label><input type="radio" name="consent" value="no"/> No</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="instruction">
+    All categories under these notes will correspond to the hours allocated to you. If any task is left incomplete because you did not perform the required task, the full time will not be credited to your hours. To receive full credit for the hours, all tasks must be completed.
+  </div>
+
+  <hr class="rule"/>
+
+  <!-- SECTION 1: Assessment -->
+  <div class="section-head">
+    <span class="section-num">1.</span>
+    <span><strong>Assessment&nbsp;&mdash;</strong> Please check the completed assessments and specify details or highlight what is relevant for your treatment plan.</span>
+  </div>
+
+  <ul class="check-list">
+    <li>
+      <input type="checkbox" id="chk_interview" name="chk_interview"/>
+      <label for="chk_interview" style="white-space:nowrap; font-weight:600;">Client Interview / Client Re-Interview</label>
+      <input class="check-detail" type="text" placeholder="Details / notes…" name="detail_interview"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_posture" name="chk_posture"/>
+      <label for="chk_posture" style="white-space:nowrap; font-weight:600;">Posture</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_posture"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_gait" name="chk_gait"/>
+      <label for="chk_gait" style="white-space:nowrap; font-weight:600;">Gait Analysis</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_gait"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_palp" name="chk_palp"/>
+      <label for="chk_palp" style="white-space:nowrap; font-weight:600;">Palpation</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_palp"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_rom" name="chk_rom"/>
+      <label for="chk_rom" style="white-space:nowrap; font-weight:600;">Range of Motion</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_rom"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_ortho" name="chk_ortho"/>
+      <label for="chk_ortho" style="white-space:nowrap; font-weight:600;">Orthopedic Test</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_ortho"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_func" name="chk_func"/>
+      <label for="chk_func" style="white-space:nowrap; font-weight:600;">Functional Test</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_func"/>
+    </li>
+    <li>
+      <input type="checkbox" id="chk_neuro" name="chk_neuro"/>
+      <label for="chk_neuro" style="white-space:nowrap; font-weight:600;">Neurological Test</label>
+      <input class="check-detail" type="text" placeholder="Details / findings…" name="detail_neuro"/>
+    </li>
+  </ul>
+
+  <hr class="rule"/>
+
+  <!-- SECTION 2: Treatment -->
+  <div class="section-head">
+    <span class="section-num">2.</span>
+    <span><strong>Treatment&nbsp;&mdash;</strong> Please specify the location, techniques used, and create a treatment plan for the client's next visit.</span>
+  </div>
+
+  <div class="sub-label">Subjective: <span style="font-weight:400; font-style:italic;">(Patient's Point of View)</span></div>
+  <div class="box-field">
+    <textarea id="subjective" name="subjective" placeholder="Document the patient's description of their condition, pain levels, history, and concerns…"></textarea>
+  </div>
+
+  <div class="sub-label">Objective: <span style="font-weight:400; font-style:italic;">(Therapist's Point of View)</span></div>
+  <div class="box-field">
+    <textarea id="objective" name="objective" placeholder="Document your clinical observations, findings from assessment, postural analysis, etc.…"></textarea>
+  </div>
+
+  <div class="sub-label">Technique Used &amp; Location: <span style="font-weight:400; font-style:italic;">(Explain the Treatment You Provided the Patient)</span></div>
+  <div class="box-field">
+    <textarea id="technique" name="technique" placeholder="Describe techniques applied (e.g. Swedish, deep tissue, trigger point), body areas treated, pressure used, and patient response…" style="min-height:110px;"></textarea>
+  </div>
+
+  <div class="sub-label">Treatment Plan for The Next Visit</div>
+  <div class="box-field">
+    <textarea id="treatPlan" name="treatPlan" placeholder="Outline the goals and approach for the patient's next treatment session…"></textarea>
+  </div>
+
+  <hr class="rule"/>
+
+  <!-- SECTION 3: Self Care Plan -->
+  <div class="section-head">
+    <span class="section-num">3.</span>
+    <span><strong>Self Care Plan&nbsp;&mdash;</strong> Please include your recommended hydrotherapy, stretches, strengthening exercises, and the suggestive frequency of treatments.</span>
+  </div>
+  <div class="box-field">
+    <textarea id="selfCare" name="selfCare" placeholder="List recommended home care: hydrotherapy (hot/cold application), specific stretches, strengthening exercises, activity modifications, and suggested treatment frequency…" style="min-height:110px;"></textarea>
+  </div>
+
+  <hr class="rule"/>
+
+  <!-- SECTION 4: Instructor Comments -->
+  <div class="instructor-block">
+    <div class="section-head">
+      <span class="section-num">4.</span>
+      <span><strong>RMT Comments</strong></span>
+    </div>
+    <div class="box-field">
+      <textarea id="instructorComments" name="instructorComments" placeholder="RMT feedback and comments…" style="min-height:80px;"></textarea>
+    </div>
+
+    <!-- Signature Pad -->
+    <div class="sig-pad-wrap">
+      <div class="sig-pad-label">RMT Signature</div>
+
+      <!-- Interactive canvas (screen only) -->
+      <div class="sig-pad-box" id="sigPadBox">
+        <canvas id="sigCanvas"></canvas>
+        <div class="sig-watermark">Sign here&hellip;</div>
+      </div>
+      <div class="sig-pad-controls">
+        <span class="sig-status" id="sigStatus"></span>
+        <button class="sig-btn" type="button" onclick="clearSig()">Clear</button>
+      </div>
+
+      <!-- Print-only snapshot — populated automatically before printing -->
+      <div class="sig-print-area" id="sigPrintArea">
+        <img id="sigPrintImg" alt="RMT Signature"/>
+      </div>
+    </div>
+
+    <!-- Date field -->
+    <div class="sig-row" style="margin-top:18px;">
+      <div style="flex:.5;">
+        <input type="date" id="sigDate" name="sigDate" style="border:none; border-bottom:1.5px solid var(--rule); background:transparent; font-family:var(--serif); font-size:10.5pt; width:100%; outline:none; padding:2px 4px;"/>
+        <div class="sig-label" style="margin-top:4px;">(Date)</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  /* ── FORM UTILITIES ── */
+  function clearForm() {
+    if (!confirm('Clear all fields? This cannot be undone.')) return;
+    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
+    clearSig();
+  }
+
+  // Auto-resize textareas
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+  });
+
+  // Highlight active field
+  document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => {
+    el.addEventListener('focus', () => el.style.background = '#f0f7ff');
+    el.addEventListener('blur',  () => el.style.background = 'transparent');
+  });
+
+  /* ── SIGNATURE PAD ── */
+  const canvas    = document.getElementById('sigCanvas');
+  const box       = document.getElementById('sigPadBox');
+  const ctx       = canvas.getContext('2d');
+  const statusEl  = document.getElementById('sigStatus');
+  const printImg  = document.getElementById('sigPrintImg');
+  let drawing     = false;
+  let lastX = 0, lastY = 0;
+  let hasMark     = false;
+
+  /* Size the canvas backing store to match its CSS display size */
+  function resizeCanvas() {
+    const dpr      = window.devicePixelRatio || 1;
+    const rect     = canvas.getBoundingClientRect();
+    const snapshot = hasMark ? canvas.toDataURL() : null;
+
+    canvas.width  = Math.round(rect.width  * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    applyCtxStyle();
+
+    if (snapshot) {
+      const tmp = new Image();
+      tmp.onload = () => ctx.drawImage(tmp, 0, 0, rect.width, rect.height);
+      tmp.src = snapshot;
+    }
+  }
+
+  function applyCtxStyle() {
+    ctx.strokeStyle = '#09101d';
+    ctx.lineWidth   = 2;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+  }
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const src  = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    drawing = true;
+    const p = getPos(e);
+    [lastX, lastY] = [p.x, p.y];
+    // draw a dot for single taps/clicks
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 0.8, 0, Math.PI * 2);
+    ctx.fillStyle = '#09101d';
+    ctx.fill();
+    applyCtxStyle();
+    hasMark = true;
+    box.classList.add('has-sig');
+    updateStatus();
+  }
+
+  function draw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    [lastX, lastY] = [p.x, p.y];
+  }
+
+  function stopDraw(e) {
+    if (!drawing) return;
+    drawing = false;
+    // Auto-capture snapshot after every stroke so print always has the latest
+    captureSnapshot();
+  }
+
+  /* Capture canvas → hidden print img immediately after each stroke */
+  function captureSnapshot() {
+    if (!hasMark) return;
+    printImg.src = canvas.toDataURL('image/png');
+  }
+
+  function updateStatus() {
+    statusEl.textContent = hasMark ? '✓ Signature ready for PDF' : '';
+    statusEl.style.color = '#27a06a';
+    statusEl.style.fontFamily = 'var(--sans)';
+    statusEl.style.fontSize   = '9pt';
+  }
+
+  // Mouse
+  canvas.addEventListener('mousedown',  startDraw);
+  canvas.addEventListener('mousemove',  draw);
+  canvas.addEventListener('mouseup',    stopDraw);
+  canvas.addEventListener('mouseleave', stopDraw);
+
+  // Touch
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove',  draw,      { passive: false });
+  canvas.addEventListener('touchend',   stopDraw);
+
+  function clearSig() {
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    hasMark = false;
+    drawing = false;
+    box.classList.remove('has-sig');
+    printImg.src = '';
+    statusEl.textContent = '';
+  }
+
+  /* ── BEFORE PRINT: ensure snapshot is current ── */
+  function beforePrintHandler() {
+    if (hasMark) {
+      // Re-capture at full resolution right before browser renders the page
+      printImg.src = canvas.toDataURL('image/png');
+    } else {
+      printImg.src = '';
+    }
+  }
+
+  window.addEventListener('beforeprint', beforePrintHandler);
+  // matchMedia fallback for browsers that don't fire beforeprint reliably (e.g. some Chromium)
+  if (window.matchMedia) {
+    const mql = window.matchMedia('print');
+    mql.addEventListener('change', e => { if (e.matches) beforePrintHandler(); });
+  }
+
+  // Init + resize
+  window.addEventListener('load',   resizeCanvas);
+  window.addEventListener('resize', () => {
+    // brief debounce to avoid thrashing during live resize
+    clearTimeout(window._resizeTimer);
+    window._resizeTimer = setTimeout(resizeCanvas, 120);
+  });
+</script>
+</body>
+</html>

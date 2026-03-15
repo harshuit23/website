@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Forms and documents for ErinGlen Wellness massage therapy services. Download and submit your informed consent form.">
+    <meta name="keywords" content="massage therapy forms, consent form, health forms, massage therapy documents">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="ErinGlen Wellness">
+    <meta property="og:title" content="Forms & Documents - ErinGlen Wellness">
+    <meta property="og:description" content="Complete your massage therapy forms online.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eringlenwellness.ca/forms">
+    <meta property="og:image" content="https://eringlenwellness.ca/og-image.jpg">
+    <link rel="canonical" href="https://eringlenwellness.ca/forms">
+    <title>Forms & Documents - ErinGlen Wellness | Massage Therapy</title>
+
+    <!-- Your existing site stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PDF libraries (replaces old html2pdf with the more reliable combo) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+    /* ─────────────────────────────────────────────────────────
+       CONSENT FORM STYLES
+       All selectors prefixed .eg- so they never clash with
+       your existing styles.css rules.
+    ───────────────────────────────────────────────────────── */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
+    :root {
+        --eg-teal:     #2d7d6e;
+        --eg-teal-dk:  #1e5a4e;
+        --eg-teal-lt:  #e8f4f2;
+        --eg-teal-mid: #4a9d8c;
+        --eg-warm:     #faf8f5;
+        --eg-paper:    #ffffff;
+        --eg-ink:      #1a1a1a;
+        --eg-muted:    #6b7280;
+        --eg-border:   #d1d9d6;
+        --eg-gold:     #c9883a;
+        --eg-gold-lt:  #fef6ec;
+        --eg-red:      #b91c1c;
+        --eg-red-lt:   #fef2f2;
+        --eg-green:    #15803d;
+        --eg-green-lt: #f0fdf4;
+        --eg-r:        6px;
+        --eg-shadow:   0 8px 40px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.05);
+        --eg-fd:       'Playfair Display', Georgia, serif;
+        --eg-fb:       'DM Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    /* Section wrapper */
+    .eg-section {
+        background: var(--eg-warm);
+        padding: 72px 16px 96px;
+        font-family: var(--eg-fb);
+        min-height: 80vh;
+    }
+    .eg-container { max-width: 860px; margin: 0 auto; }
+
+    /* Page heading */
+    .eg-page-title {
+        font-family: var(--eg-fd);
+        font-size: clamp(24px, 4vw, 36px);
+        font-weight: 700;
+        color: var(--eg-teal-dk);
+        text-align: center;
+        margin: 0 0 6px;
+        line-height: 1.2;
+    }
+    .eg-page-sub {
+        text-align: center;
+        font-size: 14px;
+        color: var(--eg-muted);
+        margin: 0 0 40px;
+        font-style: italic;
+    }
+
+    /* Setup note (dismiss after going live) */
+    .eg-setup-note {
+        background: var(--eg-gold-lt);
+        border: 1px solid #f0c87a;
+        border-radius: var(--eg-r);
+        padding: 12px 18px;
+        font-size: 12.5px;
+        color: #713f12;
+        margin-bottom: 22px;
+        line-height: 1.7;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .eg-setup-note .eg-close-note {
+        margin-left: auto; flex-shrink: 0;
+        background: none; border: none;
+        color: #a16207; font-size: 18px;
+        cursor: pointer; padding: 0 0 0 14px;
+        line-height: 1;
+    }
+
+    /* Card */
+    .eg-card {
+        background: var(--eg-paper);
+        border-radius: 12px;
+        box-shadow: var(--eg-shadow);
+        overflow: hidden;
+        border: 1px solid rgba(45,125,110,.09);
+    }
+
+    /* Card header band */
+    .eg-card-hdr {
+        background: linear-gradient(135deg, var(--eg-teal-dk) 0%, var(--eg-teal) 55%, var(--eg-teal-mid) 100%);
+        padding: 28px 42px 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+    .eg-card-hdr::before {
+        content:'';
+        position:absolute; right:-40px; top:-40px;
+        width:200px; height:200px; border-radius:50%;
+        background: rgba(255,255,255,.05);
+    }
+    .eg-hdr-icon {
+        width: 52px; height: 52px; flex-shrink: 0;
+        background: rgba(255,255,255,.18);
+        border: 1.5px solid rgba(255,255,255,.28);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; color: #fff;
+    }
+    .eg-hdr-text h3 {
+        font-family: var(--eg-fd);
+        font-size: clamp(16px, 2.8vw, 22px);
+        font-weight: 700;
+        color: #fff;
+        margin: 0 0 6px;
+        line-height: 1.3;
+    }
+    .eg-hdr-text p {
+        font-size: 12px;
+        color: rgba(255,255,255,.68);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Consent text */
+    .eg-consent-text {
+        padding: 34px 42px 28px;
+        border-bottom: 1px solid var(--eg-border);
+    }
+    .eg-consent-text p {
+        font-size: 14px;
+        line-height: 1.82;
+        color: #374151;
+        margin: 0 0 14px;
+    }
+    .eg-consent-text p:last-child { margin-bottom: 0; }
+    .eg-privacy-block {
+        background: var(--eg-teal-lt);
+        border-left: 3px solid var(--eg-teal);
+        border-radius: 0 var(--eg-r) var(--eg-r) 0;
+        padding: 14px 18px;
+        font-size: 13.5px;
+        line-height: 1.78;
+        color: #1e4d44;
+        margin-top: 18px;
+    }
+
+    /* Form area */
+    .eg-form-area {
+        padding: 16px 42px 20px;
+    }
+    .eg-form-area-title {
+        font-family: var(--eg-fb);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--eg-teal-dk);
+        margin: 0 0 10px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid var(--eg-teal-lt);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    /* Field grid */
+    .eg-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 12px;
+    }
+    @media(max-width:560px) {
+        .eg-row { grid-template-columns: 1fr; }
+        .eg-card-hdr, .eg-consent-text, .eg-form-area {
+            padding-left: 20px; padding-right: 20px;
+        }
+    }
+    .eg-field { display: flex; flex-direction: column; gap: 6px; }
+    .eg-field label {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: var(--eg-teal-dk);
+    }
+    .eg-field label .req { color: var(--eg-red); margin-left: 2px; }
+    .eg-field input {
+        font-family: var(--eg-fb);
+        font-size: 14.5px;
+        color: var(--eg-ink);
+        background: var(--eg-warm);
+        border: 1.5px solid var(--eg-border);
+        border-radius: var(--eg-r);
+        padding: 8px 12px;
+        outline: none;
+        width: 100%;
+        transition: border-color .18s, box-shadow .18s, background .18s;
+    }
+    .eg-field input::placeholder { color: #b8c0bc; }
+    .eg-field input:focus {
+        border-color: var(--eg-teal);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(45,125,110,.13);
+    }
+    .eg-field input.eg-err {
+        border-color: var(--eg-red);
+        background: var(--eg-red-lt);
+        box-shadow: 0 0 0 3px rgba(185,28,28,.10);
+    }
+
+    /* ── Signature pad ── */
+    .eg-sig-section { margin-bottom: 8px; }
+    .eg-sig-lbl {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: var(--eg-teal-dk);
+        display: block;
+        margin-bottom: 2px;
+    }
+    .eg-sig-lbl .req { color: var(--eg-red); margin-left: 2px; }
+    .eg-sig-hint {
+        font-size: 11.5px;
+        color: var(--eg-muted);
+        font-style: italic;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    /* Canvas wrapper (shown on screen, hidden during PDF render) */
+    .eg-pad-wrap {
+        position: relative;
+        border: 1.5px solid var(--eg-border);
+        border-radius: var(--eg-r);
+        background: #fdfdfc;
+        overflow: hidden;
+        transition: border-color .2s, box-shadow .2s;
+        cursor: crosshair;
+    }
+    .eg-pad-wrap.eg-pad-active {
+        border-color: var(--eg-teal);
+        box-shadow: 0 0 0 3px rgba(45,125,110,.13);
+    }
+    .eg-pad-wrap.eg-err {
+        border-color: var(--eg-red);
+        box-shadow: 0 0 0 3px rgba(185,28,28,.10);
+    }
+    .eg-pad-wrap canvas {
+        display: block;
+        width: 100%;
+        height: 80px;
+        touch-action: none;
+    }
+    .eg-pad-ghost {
+        position: absolute; inset: 0;
+        pointer-events: none;
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--eg-fd);
+        font-size: 18px;
+        font-style: italic;
+        color: #cdd4d2;
+        letter-spacing: .04em;
+        transition: opacity .22s;
+    }
+    .eg-pad-wrap.eg-has-sig .eg-pad-ghost { opacity: 0; }
+
+    /* Static image shown in PDF / print (hidden on screen by default) */
+    .eg-sig-snap {
+        display: none;
+        width: 100%;
+        height: 80px;
+        object-fit: contain;
+        border: 1.5px solid var(--eg-border);
+        border-radius: var(--eg-r);
+        background: #fdfdfc;
+    }
+
+    .eg-sig-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 4px;
+    }
+    .eg-sig-status {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--eg-green);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 16px;
+    }
+    .eg-clear-sig-btn {
+        font-family: var(--eg-fb);
+        font-size: 11px; font-weight: 600;
+        letter-spacing: .07em; text-transform: uppercase;
+        padding: 6px 18px;
+        border: 1.5px solid var(--eg-border);
+        border-radius: 40px;
+        background: transparent;
+        color: var(--eg-muted);
+        cursor: pointer;
+        transition: all .16s;
+    }
+    .eg-clear-sig-btn:hover { border-color: var(--eg-teal-dk); color: var(--eg-teal-dk); }
+
+    /* ── Action buttons ── */
+    .eg-btn-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-top: 12px;
+        border-top: 1.5px solid var(--eg-border);
+    }
+    .eg-btn {
+        font-family: var(--eg-fb);
+        font-size: 12.5px; font-weight: 600;
+        letter-spacing: .08em; text-transform: uppercase;
+        padding: 10px 24px;
+        border: none; border-radius: 40px;
+        cursor: pointer;
+        display: inline-flex; align-items: center; gap: 9px;
+        transition: background .18s, box-shadow .18s, transform .14s;
+        white-space: nowrap;
+    }
+    .eg-btn:disabled { opacity: .45; cursor: not-allowed; pointer-events: none; }
+    .eg-btn-save {
+        background: var(--eg-teal-dk); color: #fff;
+        box-shadow: 0 4px 14px rgba(30,90,78,.28);
+        flex: 1;
+    }
+    .eg-btn-save:hover {
+        background: #133d34;
+        box-shadow: 0 6px 20px rgba(30,90,78,.38);
+        transform: translateY(-1px);
+    }
+    .eg-btn-submit {
+        background: var(--eg-gold); color: #fff;
+        box-shadow: 0 4px 14px rgba(201,136,58,.28);
+        flex: 2;
+    }
+    .eg-btn-submit:hover {
+        background: #a56c22;
+        box-shadow: 0 6px 20px rgba(201,136,58,.38);
+        transform: translateY(-1px);
+    }
+    .eg-btn-reset {
+        background: transparent; color: var(--eg-muted);
+        border: 1.5px solid var(--eg-border);
+    }
+    .eg-btn-reset:hover { border-color: var(--eg-ink); color: var(--eg-ink); }
+    @media(max-width:480px) {
+        .eg-btn { flex: 1 1 100%; justify-content: center; }
+    }
+
+    /* ── Success banner ── */
+    .eg-success-banner {
+        display: none;
+        margin-top: 20px;
+        background: var(--eg-green-lt);
+        border: 1.5px solid #86efac;
+        border-radius: var(--eg-r);
+        padding: 16px 22px;
+        font-size: 14px;
+        color: #14532d;
+        line-height: 1.7;
+    }
+    .eg-success-banner.show { display: block; }
+    .eg-success-banner strong {
+        display: block; font-size: 15px; margin-bottom: 5px;
+    }
+
+    /* ── Toast ── */
+    #egToast {
+        position: fixed; bottom: 28px; right: 28px; z-index: 99999;
+        font-family: var(--eg-fb);
+        font-size: 13.5px; font-weight: 500;
+        padding: 13px 22px;
+        border-radius: 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,.22);
+        opacity: 0; pointer-events: none;
+        transition: opacity .28s, transform .28s;
+        transform: translateY(12px);
+        max-width: 360px; line-height: 1.55;
+    }
+    #egToast.show { opacity: 1; transform: translateY(0); }
+    #egToast.success { background: var(--eg-teal-dk); color: #fff; }
+    #egToast.error   { background: var(--eg-red);     color: #fff; }
+    #egToast.info    { background: #1c2b3a;             color: #fff; }
+
+    /* ── Progress overlay ── */
+    #egProg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(10,18,18,.55);
+        backdrop-filter: blur(4px);
+        z-index: 99998;
+        align-items: center; justify-content: center;
+    }
+    #egProg.active { display: flex; }
+    .eg-prog-card {
+        background: #fff; border-radius: 12px;
+        padding: 34px 50px; text-align: center;
+        min-width: 300px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .eg-prog-spinner {
+        width: 36px; height: 36px;
+        border: 3px solid var(--eg-teal-lt);
+        border-top-color: var(--eg-teal);
+        border-radius: 50%;
+        animation: eg-spin 0.9s linear infinite;
+        margin: 0 auto 14px;
+    }
+    @keyframes eg-spin { to { transform: rotate(360deg); } }
+    .eg-prog-card h4 {
+        font-family: var(--eg-fd);
+        font-size: 17px; color: var(--eg-teal-dk);
+        margin: 0 0 16px; font-weight: 600;
+    }
+    .eg-prog-track {
+        width: 100%; height: 5px;
+        background: var(--eg-teal-lt);
+        border-radius: 3px; overflow: hidden;
+    }
+    .eg-prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--eg-teal), var(--eg-gold));
+        border-radius: 3px; width: 0%;
+        transition: width .35s ease;
+    }
+    .eg-prog-msg { font-size: 12px; color: var(--eg-muted); margin-top: 10px; }
+
+    /* ── Print ── */
+    @media print {
+        .eg-section { padding: 0; background: #fff; }
+        .eg-btn-row, #egToast, #egProg, .eg-setup-note,
+        .eg-pad-wrap, .eg-sig-foot, .eg-sig-hint,
+        .eg-success-banner { display: none !important; }
+        .eg-sig-snap { display: block !important; }
+        .eg-card { box-shadow: none !important; border-radius: 0; }
+        .eg-card-hdr {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+    </style>
+</head>
+<body>
+
+<!-- ════════════ EXISTING NAVBAR — UNTOUCHED ════════════ -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <i class="fas fa-spa"></i>
+            <span>ErinGlen Wellness</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="index.html"              class="nav-link">Home</a></li>
+            <li><a href="index.html#services"     class="nav-link">Services</a></li>
+            <li><a href="index.html#about"        class="nav-link">About</a></li>
+            <li><a href="index.html#appointments" class="nav-link">Book Appointment</a></li>
+            <li><a href="forms.html"              class="nav-link active">Forms</a></li>
+            <li><a href="index.html#contact"      class="nav-link">Contact</a></li>
+        </ul>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- ════════════ CONSENT SECTION ════════════ -->
+<section class="eg-section" id="forms">
+<div class="eg-container">
+
+    <h2 class="eg-page-title">Forms &amp; Documents</h2>
+    <p class="eg-page-sub">Please read, complete, and sign your consent form. All information is strictly confidential.</p>
+
+
+
+    <!-- ── CARD ── -->
+    <div class="eg-card" id="egConsentCard">
+
+        <!-- Header band -->
+        <div class="eg-card-hdr">
+            <div class="eg-hdr-icon">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <div class="eg-hdr-text">
+                <h3>Informed Consent to Registered Massage Therapy</h3>
+                <p>ErinGlenWellness &nbsp;·&nbsp; 17624999 Canada Inc &nbsp;·&nbsp; 112 Henshaw Dr, Erin, NOB 1T0</p>
+            </div>
+        </div>
+
+        <!-- Consent text (word-for-word from original) -->
+        <div class="eg-consent-text">
+            <p>I understand that the massage therapist is providing massage therapy services within their scope of practice as defined by the College of Massage Therapists of Ontario.</p>
+
+            <p>I hereby consent for my therapist to treat me with massage therapy for the above noted purposes including such assessments, examinations and techniques, which may be recommended by my therapist.</p>
+
+            <p>I acknowledge that the therapist is not a physician and does not diagnose illness or disease or any other physical or mental disorder. I clearly understand massage therapy is not a substitute for a medical examination. It is recommended that I attend my personal physician for any ailments that I may be experiencing. I acknowledge that no assurance or guarantee has been provided to me as to the results of the treatment. I acknowledge that with any treatment there can be risks and those risks have been explained to me and I assume those risks.</p>
+
+            <p>I acknowledge and understand that the therapist must be fully aware of my existing medical conditions. I have completed my medical history form as provided by my therapist and disclosed to the therapist all of those medical conditions affecting me. It is my responsibility to keep the massage therapist updated on my medical history. The information I have provided is true and complete to the best of my knowledge.</p>
+
+            <p>I authorize my therapist to release or obtain information pertaining to my condition(s) and/or treatment(s) to/from my other caregivers or third party payers.</p>
+
+            <p>I have read the above noted consent and I have had the opportunity to question the contents and my therapy. By signing this form I confirm my consent to treatment and intend the consent to cover the treatment discussed with me and such additional treatment as proposed by my therapist from time to time to deal with my physical condition and for which I have sought treatment. I understand that at any time I may withdraw my consent and treatment will be stopped.</p>
+
+            <div class="eg-privacy-block">
+                <strong>Privacy Policy:</strong> The information provided by you to the treating Massage Therapist is used to create an ongoing health file about you. All client information is Private and Confidential and will be treated as such. Your information will never be made available to any outside source without your written consent except where required by law. You may access your health file at any time and if required request a copy by making a written request.
+            </div>
+        </div>
+
+        <!-- ── FORM ── -->
+        <div class="eg-form-area">
+            <div class="eg-form-area-title">
+                <i class="fas fa-pen-nib" style="font-size:12px;opacity:.8"></i>
+                Client Details &amp; Signature
+            </div>
+
+            <!-- Row 1: Name + Email -->
+            <div class="eg-row">
+                <div class="eg-field">
+                    <label for="egName">Client Name <span class="req">*</span></label>
+                    <input type="text"  id="egName"  placeholder="First and Last name" autocomplete="name"/>
+                </div>
+                <div class="eg-field">
+                    <label for="egEmail">Email Address <span class="req">*</span></label>
+                    <input type="email" id="egEmail" placeholder="name@email.com" autocomplete="email"/>
+                </div>
+            </div>
+
+            <!-- Row 2: Date + Therapist -->
+            <div class="eg-row">
+                <div class="eg-field">
+                    <label for="egDate">Date Signed <span class="req">*</span></label>
+                    <input type="date" id="egDate"/>
+                </div>
+                <div class="eg-field">
+                    <label for="egTherapist">Therapist Name</label>
+                    <input type="text" id="egTherapist" placeholder="Optional"/>
+                </div>
+            </div>
+
+            <!-- Signature pad -->
+            <div class="eg-sig-section">
+                <span class="eg-sig-lbl">Client Signature <span class="req">*</span></span>
+                <span class="eg-sig-hint">Use your mouse or finger to draw your signature in the box below</span>
+
+                <!-- Interactive canvas — hidden during PDF render -->
+                <div class="eg-pad-wrap" id="egPadWrap">
+                    <canvas id="egSigCanvas"></canvas>
+                    <div class="eg-pad-ghost">Sign here…</div>
+                </div>
+                <div class="eg-sig-foot">
+                    <span class="eg-sig-status" id="egSigStatus"></span>
+                    <button type="button" class="eg-clear-sig-btn" onclick="egClearSig()">
+                        <i class="fas fa-undo" style="font-size:10px"></i>&nbsp; Clear Signature
+                    </button>
+                </div>
+
+                <!-- Static snapshot — shown only during PDF render / print -->
+                <img id="egSigSnap" class="eg-sig-snap" alt="Client Signature"/>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="eg-btn-row">
+                <button type="button" class="eg-btn eg-btn-save"   onclick="egSavePDF()">
+                    <i class="fas fa-file-download"></i> Save PDF
+                </button>
+                <button type="button" class="eg-btn eg-btn-submit" onclick="egSubmitForm()">
+                    <i class="fas fa-paper-plane"></i> Submit Form
+                </button>
+                <button type="button" class="eg-btn eg-btn-reset"  onclick="egReset()">
+                    <i class="fas fa-redo"></i> Clear
+                </button>
+            </div>
+
+            <!-- Success message -->
+            <div class="eg-success-banner" id="egSuccessBanner">
+                <strong><i class="fas fa-check-circle"></i>&nbsp; Form submitted successfully!</strong>
+                ErinGlenWellness has received your signed consent form and a confirmation has been sent to your email address. A PDF copy has also been saved to your device for your own records.
+            </div>
+
+        </div><!-- /eg-form-area -->
+    </div><!-- /eg-card -->
+</div>
+</section>
+
+<!-- ════════════ EXISTING FOOTER — UNTOUCHED ════════════ -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 ErinGlen Wellness. All rights reserved.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+    </div>
+</footer>
+
+<!-- Toast notification -->
+<div id="egToast"></div>
+
+<!-- Progress overlay -->
+<div id="egProg">
+    <div class="eg-prog-card">
+        <div class="eg-prog-spinner"></div>
+        <h4 id="egProgTitle">Working…</h4>
+        <div class="eg-prog-track">
+            <div class="eg-prog-fill" id="egProgFill"></div>
+        </div>
+        <div class="eg-prog-msg" id="egProgMsg">Please wait, do not close this page</div>
+    </div>
+</div>
+
+<!-- Your existing site JS (handles navbar hamburger, animations, etc.) -->
+<script src="script.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONSENT FORM LOGIC
+     All functions and variables prefixed "eg" to avoid
+     any conflict with your existing script.js code.
+════════════════════════════════════════════════════════════ -->
+<script>
+/* ══════════════════════════════════════════════════════
+   ⚙  CONFIGURATION
+   After completing the setup steps in the instructions
+   file, replace the placeholder below with your actual
+   Google Apps Script Web App URL.
+══════════════════════════════════════════════════════ */
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbztKyC4sC7t8fkpBApCo4FsZzSqSA70vUMhmMoAMWlaPHc9iHGAPJS0VFiQasj8F8fpEw/exec';
+/* ──────────────────────────────────────────────────── */
+
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+function egShowToast(msg, type = 'info', dur = 4500) {
+    const el = document.getElementById('egToast');
+    el.textContent = msg;
+    el.className   = 'show ' + type;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+
+/* ══════════════════════════════════════════════════════
+   PROGRESS OVERLAY
+══════════════════════════════════════════════════════ */
+function egProgShow(title) {
+    document.getElementById('egProgTitle').textContent = title;
+    egProgSet(0, 'Please wait, do not close this page…');
+    document.getElementById('egProg').classList.add('active');
+}
+function egProgSet(pct, msg) {
+    document.getElementById('egProgFill').style.width = pct + '%';
+    if (msg) document.getElementById('egProgMsg').textContent = msg;
+}
+function egProgHide() {
+    document.getElementById('egProg').classList.remove('active');
+}
+
+
+/* ══════════════════════════════════════════════════════
+   SIGNATURE PAD
+══════════════════════════════════════════════════════ */
+(function () {
+    const canvas   = document.getElementById('egSigCanvas');
+    const wrap     = document.getElementById('egPadWrap');
+    const statusEl = document.getElementById('egSigStatus');
+    const snapImg  = document.getElementById('egSigSnap');
+    const ctx      = canvas.getContext('2d');
+    let drawing = false, lx = 0, ly = 0;
+
+    /* make canvas pixel-perfect on hi-DPI screens */
+    function resize() {
+        const dpr  = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        const prev = window._egHasSig ? canvas.toDataURL() : null;
+        canvas.width  = Math.round(rect.width  * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        style();
+        if (prev) {
+            const i = new Image();
+            i.onload = () => ctx.drawImage(i, 0, 0, rect.width, rect.height);
+            i.src = prev;
+        }
+    }
+    function style() {
+        ctx.strokeStyle = '#1a1a1a';
+        ctx.lineWidth   = 2;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+    }
+    function pos(e) {
+        const r = canvas.getBoundingClientRect();
+        const s = e.touches ? e.touches[0] : e;
+        return { x: s.clientX - r.left, y: s.clientY - r.top };
+    }
+    function start(e) {
+        e.preventDefault();
+        drawing = true;
+        const p = pos(e);
+        [lx, ly] = [p.x, p.y];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 0.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fill();
+        style();
+        window._egHasSig = true;
+        wrap.classList.add('eg-has-sig', 'eg-pad-active');
+        wrap.classList.remove('eg-err');
+    }
+    function move(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const p = pos(e);
+        ctx.beginPath();
+        ctx.moveTo(lx, ly);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        [lx, ly] = [p.x, p.y];
+    }
+    function stop() {
+        if (!drawing) return;
+        drawing = false;
+        capture();
+    }
+    function capture() {
+        if (window._egHasSig) {
+            snapImg.src = canvas.toDataURL('image/png');
+            statusEl.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Signature captured';
+        }
+    }
+
+    canvas.addEventListener('mousedown',  start);
+    canvas.addEventListener('mousemove',  move);
+    canvas.addEventListener('mouseup',    stop);
+    canvas.addEventListener('mouseleave', stop);
+    canvas.addEventListener('touchstart', start, { passive: false });
+    canvas.addEventListener('touchmove',  move,  { passive: false });
+    canvas.addEventListener('touchend',   stop);
+
+    window.addEventListener('load',   resize);
+    window.addEventListener('resize', () => { clearTimeout(window._egRst); window._egRst = setTimeout(resize, 130); });
+
+    /* re-capture just before print / PDF */
+    window.addEventListener('beforeprint', capture);
+    if (window.matchMedia) {
+        window.matchMedia('print').addEventListener('change', e => { if (e.matches) capture(); });
+    }
+
+    /* expose clear function globally */
+    window.egClearSig = function () {
+        const r = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, r.width, r.height);
+        window._egHasSig = false;
+        drawing = false;
+        wrap.classList.remove('eg-has-sig', 'eg-pad-active', 'eg-err');
+        snapImg.src        = '';
+        statusEl.textContent = '';
+    };
+})();
+
+
+/* ══════════════════════════════════════════════════════
+   AUTO-FILL TODAY'S DATE
+══════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+    const t   = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    document.getElementById('egDate').value = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+});
+
+
+/* ══════════════════════════════════════════════════════
+   VALIDATION
+══════════════════════════════════════════════════════ */
+function egValidate() {
+    const nameEl  = document.getElementById('egName');
+    const emailEl = document.getElementById('egEmail');
+    const dateEl  = document.getElementById('egDate');
+    const wrap    = document.getElementById('egPadWrap');
+
+    [nameEl, emailEl, dateEl].forEach(el => el.classList.remove('eg-err'));
+    wrap.classList.remove('eg-err');
+
+    if (!nameEl.value.trim()) {
+        nameEl.classList.add('eg-err');
+        egShowToast('⚠ Please enter your full name', 'error');
+        nameEl.focus();
+        return false;
+    }
+    if (!emailEl.value.trim() || !emailEl.checkValidity()) {
+        emailEl.classList.add('eg-err');
+        egShowToast('⚠ Please enter a valid email address', 'error');
+        emailEl.focus();
+        return false;
+    }
+    if (!dateEl.value) {
+        dateEl.classList.add('eg-err');
+        egShowToast("⚠ Please select today's date", 'error');
+        dateEl.focus();
+        return false;
+    }
+    if (!window._egHasSig) {
+        wrap.classList.add('eg-err');
+        egShowToast('⚠ Please draw your signature before continuing', 'error', 5500);
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    return true;
+}
+
+
+/* ══════════════════════════════════════════════════════
+   SAFE FILE NAME  →  uses the client's actual name
+   e.g. ConsentForm_Jane_Smith_20250312.pdf
+══════════════════════════════════════════════════════ */
+function egBuildFileName() {
+    const raw  = document.getElementById('egName').value.trim();
+    const date = document.getElementById('egDate').value.replace(/-/g, '');
+    const safe = raw
+        .replace(/[^a-zA-Z0-9 '\-]/g, '')   // allow letters, digits, spaces, hyphens, apostrophes
+        .trim()
+        .replace(/\s+/g, '_')               // spaces → underscores
+        || 'Client';
+    return `ConsentForm_${safe}_${date}.pdf`;
+}
+
+
+/* ══════════════════════════════════════════════════════
+   GENERATE PDF  →  returns a jsPDF object
+   Temporarily swaps interactive elements for the
+   static snapshot so the signature renders in the PDF.
+══════════════════════════════════════════════════════ */
+async function egGeneratePDF() {
+    /* Re-capture signature at max resolution */
+    const snap = document.getElementById('egSigSnap');
+    if (window._egHasSig) {
+        snap.src = document.getElementById('egSigCanvas').toDataURL('image/png');
+    }
+
+    /* Elements to hide during render */
+    const padWrap  = document.getElementById('egPadWrap');
+    const sigFoot  = document.querySelector('.eg-sig-foot');
+    const sigHint  = document.querySelector('.eg-sig-hint');
+    const btnRow   = document.querySelector('.eg-btn-row');
+    const setupNt  = document.getElementById('egSetupNote');
+    const success  = document.getElementById('egSuccessBanner');
+
+    padWrap.style.display = 'none';
+    sigFoot.style.display = 'none';
+    sigHint.style.display = 'none';
+    btnRow.style.display  = 'none';
+    success.style.display = 'none';
+    if (setupNt) setupNt.style.display = 'none';
+    snap.style.display    = 'block';   /* show static image */
+
+    egProgSet(25, 'Rendering page…');
+    await new Promise(r => setTimeout(r, 120));
+
+    const card   = document.getElementById('egConsentCard');
+    const canvas = await html2canvas(card, {
+        scale: 2, useCORS: true, logging: false,
+        backgroundColor: '#ffffff', allowTaint: true,
+    });
+
+    egProgSet(65, 'Building PDF…');
+    await new Promise(r => setTimeout(r, 60));
+
+    const { jsPDF }  = window.jspdf;
+    const imgData    = canvas.toDataURL('image/jpeg', 0.93);
+    const ratio      = canvas.height / canvas.width;
+    const pdf        = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+    const aW         = pdf.internal.pageSize.getWidth();
+    const aH         = pdf.internal.pageSize.getHeight();
+    const fullImgH   = aW * ratio;
+    let posY = 0, page = 0;
+    while (posY < fullImgH) {
+        if (page > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, -posY, aW, fullImgH, undefined, 'FAST');
+        posY += aH; page++;
+    }
+
+    egProgSet(90, 'Finishing up…');
+    await new Promise(r => setTimeout(r, 60));
+
+    /* Restore UI */
+    padWrap.style.display = '';
+    sigFoot.style.display = '';
+    sigHint.style.display = '';
+    btnRow.style.display  = '';
+    if (setupNt) setupNt.style.display = '';
+    snap.style.display    = '';
+    /* Restore success banner only if it was previously shown */
+    if (document.getElementById('egSuccessBanner').classList.contains('show')) {
+        success.style.display = 'block';
+    }
+
+    return pdf;
+}
+
+
+/* ══════════════════════════════════════════════════════
+   SAVE PDF LOCALLY
+══════════════════════════════════════════════════════ */
+async function egSavePDF() {
+    if (!egValidate()) return;
+    egProgShow('Generating PDF…');
+    try {
+        const pdf  = await egGeneratePDF();
+        const name = egBuildFileName();
+        egProgSet(100, 'Done!');
+        pdf.save(name);
+        await new Promise(r => setTimeout(r, 400));
+        egProgHide();
+        egShowToast('✓ PDF saved to your Downloads folder', 'success');
+    } catch (err) {
+        egProgHide();
+        console.error('PDF error:', err);
+        egShowToast('⚠ PDF failed — try browser Print (Ctrl+P / ⌘+P) instead', 'error', 6000);
+    }
+}
+
+
+/* ══════════════════════════════════════════════════════
+   SUBMIT FORM  →  Google Apps Script
+   Sends the PDF as base64 so GAS can email it as an
+   attachment named after the client.
+══════════════════════════════════════════════════════ */
+async function egSubmitForm() {
+    if (!egValidate()) return;
+
+    /* Guard: GAS not yet configured */
+    if (GAS_ENDPOINT === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+        egShowToast('⚠ Submission endpoint not configured — saving PDF locally instead', 'error', 6000);
+        await egSavePDF();
+        return;
+    }
+
+    const name      = document.getElementById('egName').value.trim();
+    const email     = document.getElementById('egEmail').value.trim();
+    const date      = document.getElementById('egDate').value;
+    const therapist = document.getElementById('egTherapist').value.trim() || 'Not specified';
+    const fileName  = egBuildFileName();
+
+    egProgShow('Submitting form…');
+    try {
+        /* 1 — Generate PDF */
+        egProgSet(10, 'Generating PDF…');
+        const pdf  = await egGeneratePDF();
+        /* Strip the "data:application/pdf;base64," prefix */
+        const b64  = pdf.output('datauristring').split(',')[1];
+
+        /* 2 — Build payload */
+        egProgSet(55, 'Sending to ErinGlenWellness…');
+        const payload = {
+            clientName  : name,
+            clientEmail : email,
+            submitDate  : date,
+            therapist   : therapist,
+            fileName    : fileName,   /* ← named ConsentForm_FirstName_LastName_YYYYMMDD.pdf */
+            pdfBase64   : b64,
+        };
+
+        /* 3 — POST to Google Apps Script
+               Using text/plain avoids a CORS preflight OPTIONS request
+               on the GAS side, which does not support OPTIONS correctly */
+        await fetch(GAS_ENDPOINT, {
+            method  : 'POST',
+            headers : { 'Content-Type': 'text/plain;charset=utf-8' },
+            body    : JSON.stringify(payload),
+        });
+
+        egProgSet(95, 'Almost there…');
+        await new Promise(r => setTimeout(r, 300));
+        egProgSet(100, 'Submitted!');
+        egProgHide();
+
+        /* Also download a local copy for the client */
+        pdf.save(fileName);
+
+        /* Show success banner and toast */
+        const banner = document.getElementById('egSuccessBanner');
+        banner.classList.add('show');
+        banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        egShowToast(`✓ Submitted! Confirmation sent to ${email}`, 'success', 7000);
+
+    } catch (err) {
+        egProgHide();
+        console.error('Submit error:', err);
+        egShowToast('⚠ Could not reach server — PDF saved locally instead', 'error', 6000);
+        await egSavePDF();
+    }
+}
+
+
+/* ══════════════════════════════════════════════════════
+   RESET / CLEAR ALL
+══════════════════════════════════════════════════════ */
+function egReset() {
+    if (!confirm('Clear all fields and the signature? This cannot be undone.')) return;
+    document.getElementById('egName').value      = '';
+    document.getElementById('egEmail').value     = '';
+    document.getElementById('egTherapist').value = '';
+    const t = new Date(), pad = n => String(n).padStart(2, '0');
+    document.getElementById('egDate').value = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+    egClearSig();
+    document.getElementById('egSuccessBanner').classList.remove('show');
+    ['egName','egEmail','egDate'].forEach(id =>
+        document.getElementById(id).classList.remove('eg-err'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ErinGlen Wellness patient forms and documents - health history, consent, invoices, and more.">
+    <meta name="robots" content="noindex, follow">
+    <title>Patient Forms - ErinGlen Wellness</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Forms Page Specific Styles */
+        .forms-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3d7a52 100%);
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .forms-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .forms-hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .forms-container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .forms-intro {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .forms-intro h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .forms-intro p {
+            font-size: 1rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            border-top-color: var(--accent-color);
+        }
+
+        .form-card .form-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+        }
+
+        .form-card h3 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .form-card p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .form-card .form-btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3d7a52 100%);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .form-card .form-btn:hover {
+            background: var(--white);
+            color: var(--primary-color);
+        }
+
+        .form-details {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            text-align: left;
+        }
+
+        .form-details strong {
+            color: var(--primary-color);
+        }
+
+        .forms-footer {
+            background: var(--light-bg);
+            padding: 40px 20px;
+            margin-top: 80px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .forms-footer h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .forms-footer p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .forms-footer .contact-info {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .forms-footer .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+        }
+
+        .forms-footer .contact-item i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: var(--accent-color);
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .forms-hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .forms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .forms-footer .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>ErinGlen Wellness</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Back to Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="forms-hero">
+        <h1>Patient Forms</h1>
+        <p>Complete your intake forms, consents, and accounting documents online. All information is handled securely.</p>
+    </section>
+
+    <!-- Forms Container -->
+    <div class="forms-container">
+        <div class="forms-intro">
+            <h2>Select a Form</h2>
+            <p>Please complete all applicable forms before your appointment. These forms ensure we have your complete medical history and consent for treatment.</p>
+        </div>
+
+        <div class="forms-grid">
+            <!-- Health History Form -->
+            <div class="form-card">
+                <div class="form-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Health History</h3>
+                <div class="form-details">
+                    <strong>Required before first visit</strong><br>
+                    Medical history, medications, allergies, and body diagram
+                </div>
+                <p>Complete your initial health history intake form with our therapist.</p>
+                <a href="hh.html" class="form-btn">
+                    <i class="fas fa-external-link-alt"></i> Open Form
+                </a>
+            </div>
+
+            <!-- General Consent Form -->
+            <div class="form-card">
+                <div class="form-icon">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>General Consent</h3>
+                <div class="form-details">
+                    <strong>Required for all patients</strong><br>
+                    Agreement to massage therapy treatment
+                </div>
+                <p>Standard consent form for massage therapy services and treatment.</p>
+                <a href="consent.html" class="form-btn">
+                    <i class="fas fa-external-link-alt"></i> Open Form
+                </a>
+            </div>
+
+            <!-- Sensitive Areas Consent -->
+            <div class="form-card">
+                <div class="form-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Sensitive Areas Consent</h3>
+                <div class="form-details">
+                    <strong>Required if applicable</strong><br>
+                    CMTO-compliant consent for sensitive area treatment
+                </div>
+                <p>Specific consent when treatment includes sensitive body areas.</p>
+                <a href="sac.html" class="form-btn">
+                    <i class="fas fa-external-link-alt"></i> Open Form
+                </a>
+            </div>
+
+            <!-- Invoice -->
+            <div class="form-card">
+                <div class="form-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <h3>Invoice & Receipt</h3>
+                <div class="form-details">
+                    <strong>For insurance claims</strong><br>
+                    Generate treatment invoice and receipt
+                </div>
+                <p>Create invoices for insurance reimbursement and record keeping.</p>
+                <a href="invoice.html" class="form-btn">
+                    <i class="fas fa-external-link-alt"></i> Open Form
+                </a>
+            </div>
+
+            <!-- Insurance Consent (Sunlife) -->
+            <div class="form-card">
+                <div class="form-icon">
+                    <i class="fas fa-shield-check"></i>
+                </div>
+                <h3>Insurance Consent</h3>
+                <div class="form-details">
+                    <strong>For Sunlife & Other Plans</strong><br>
+                    Provider consent and claim authorization
+                </div>
+                <p>Complete consent form for direct billing with insurance providers.</p>
+                <a href="pmcs.html" class="form-btn">
+                    <i class="fas fa-external-link-alt"></i> Open Form
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <section class="forms-footer">
+        <h3>Need Help?</h3>
+        <p>If you have questions about any of these forms, please don't hesitate to contact us.</p>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>647-772-0337</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>eringlenrmt@gmail.com</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>112 Henshaw Dr, Erin, NOB 1T0</span>
+            </div>
+        </div>
+        <a href="index.html" class="back-button">← Back to Home</a>
+    </section>
+</body>
+</html>

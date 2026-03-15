@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Consent for Assessment and Treatment of Sensitive Areas – ErinGlenWellness"/>
+<title>Consent for Assessment and Treatment of Sensitive Areas – ErinGlenWellness</title>
+
+<!-- PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+/* ═══════════════════════════════════════════════
+   GOOGLE FONT
+═══════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+/* ═══════════════════════════════════════════════
+   ROOT
+═══════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:    #111;
+  --muted:  #555;
+  --border: #888;
+  --light:  #ddd;
+  --teal:   #1e5a4e;
+  --teal-lt:#e8f4f2;
+  --gold:   #b07030;
+  --gold-lt:#fdf6e8;
+  --red:    #b91c1c;
+  --green:  #166534;
+  --green-lt:#f0fdf4;
+  --paper:  #fefefe;
+  --bg:     #e8e8e8;
+  --serif:  'EB Garamond', Georgia, serif;
+  --sans:   'Source Sans 3', 'Helvetica Neue', sans-serif;
+  --r: 3px;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  padding: 24px 12px 90px;
+  line-height: 1.55;
+}
+
+/* ═══════════════════════════════════════════════
+   TOOLBAR
+═══════════════════════════════════════════════ */
+.toolbar {
+  max-width: 820px;
+  margin: 0 auto 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.toolbar-note {
+  font-size: 11.5px;
+  color: #666;
+  margin-right: auto;
+  font-style: italic;
+}
+.tbtn {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 9px 22px;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.tbtn-pdf    { background: var(--teal); color: #fff; box-shadow: 0 3px 12px rgba(30,90,78,.3); }
+.tbtn-pdf:hover    { background: #133d34; }
+.tbtn-submit { background: var(--gold); color: #fff; box-shadow: 0 3px 12px rgba(176,112,48,.3); }
+.tbtn-submit:hover { background: #8a5220; }
+.tbtn-clear  { background: transparent; color: #555; border: 1.5px solid #aaa; }
+.tbtn-clear:hover  { border-color: var(--ink); color: var(--ink); }
+.tbtn:disabled { opacity: .45; cursor: not-allowed; pointer-events: none; }
+
+/* Setup note */
+.setup-note {
+  max-width: 820px;
+  margin: 0 auto 14px;
+  background: var(--gold-lt);
+  border: 1px solid #e8c87a;
+  border-radius: var(--r);
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #6b3e00;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  line-height: 1.6;
+}
+.setup-note button {
+  margin-left: auto; flex-shrink: 0;
+  background: none; border: none;
+  font-size: 16px; color: #a16207;
+  cursor: pointer; padding: 0 0 0 12px; line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════
+   PAPER / DOCUMENT CARD
+═══════════════════════════════════════════════ */
+.doc {
+  max-width: 820px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 48px 60px 56px;
+  box-shadow: 0 6px 36px rgba(0,0,0,.16);
+  border-top: 4px solid var(--teal);
+  border-radius: 2px;
+}
+
+/* Clinic badge */
+.clinic-badge {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.clinic-badge .cb-name {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.clinic-badge .cb-addr {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Title */
+.doc-title {
+  font-family: var(--serif);
+  font-size: 20pt;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink);
+  margin-bottom: 24px;
+  line-height: 1.25;
+}
+.doc-title span { text-decoration: underline; }
+
+/* Rule */
+.rule { border: none; border-top: 1px solid var(--light); margin: 20px 0; }
+.rule-bold { border-top-color: var(--border); }
+
+/* Intro paragraph (italic, smaller) */
+.intro-para {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  font-style: italic;
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  text-align: justify;
+}
+
+/* ═══════════════════════════════════════════════
+   INLINE FILL FIELDS
+═══════════════════════════════════════════════ */
+.fill-line {
+  display: inline-block;
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  padding: 1px 6px;
+  outline: none;
+  transition: border-color .15s, background .15s;
+  vertical-align: baseline;
+}
+.fill-line:focus {
+  border-bottom-color: var(--teal);
+  background: var(--teal-lt);
+}
+.fill-line.err { border-bottom-color: var(--red); }
+.fill-wide  { width: 220px; }
+.fill-med   { width: 160px; }
+.fill-sm    { width: 100px; }
+.fill-date  { width: 130px; }
+
+/* Prose paragraph containing inline fill lines */
+.prose {
+  font-family: var(--serif);
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+/* ═══════════════════════════════════════════════
+   INITIALS / AREA LIST
+═══════════════════════════════════════════════ */
+.area-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 12px;
+  display: block;
+}
+.area-list { list-style: none; padding: 0; margin-bottom: 24px; }
+.area-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 0;
+  border-bottom: 1px dotted #ddd;
+  font-family: var(--serif);
+  font-size: 14.5px;
+}
+.area-item:last-child { border-bottom: none; }
+.initial-box {
+  width: 56px;
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--ink);
+  text-align: center;
+  padding: 2px 4px;
+  outline: none;
+  flex-shrink: 0;
+  transition: border-color .15s, background .15s;
+}
+.initial-box::placeholder { font-size: 10px; color: #bbb; letter-spacing: .04em; }
+.initial-box:focus {
+  border-bottom-color: var(--teal);
+  background: var(--teal-lt);
+}
+.area-name { flex: 1; }
+
+/* ═══════════════════════════════════════════════
+   BULLET SECTION
+═══════════════════════════════════════════════ */
+.bullet-head {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.bullet-list {
+  padding-left: 20px;
+  margin-bottom: 24px;
+}
+.bullet-list li {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.75;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════════════
+   CONSENT BOX
+═══════════════════════════════════════════════ */
+.consent-box {
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  padding: 18px 22px 22px;
+  margin-bottom: 30px;
+  background: #fcfcfc;
+}
+.consent-box .cb-intro {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.consent-row {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.consent-row.two-col { grid-template-columns: 1fr auto; align-items: end; }
+
+.field-group { display: flex; flex-direction: column; gap: 4px; }
+.field-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field-input {
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  padding: 4px 4px 3px;
+  outline: none;
+  width: 100%;
+  transition: border-color .15s, background .15s;
+}
+.field-input:focus { border-bottom-color: var(--teal); background: var(--teal-lt); }
+.field-input.err { border-bottom-color: var(--red); }
+
+/* ── Signature pad (main consent) ── */
+.sig-wrap-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+  display: block;
+}
+.sig-pad-outer {
+  position: relative;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color .18s;
+  cursor: crosshair;
+}
+.sig-pad-outer.active { border-color: var(--teal); }
+.sig-pad-outer.err    { border-color: var(--red); }
+.sig-pad-outer canvas {
+  display: block;
+  width: 100%;
+  height: 90px;
+  touch-action: none;
+}
+.sig-ghost {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 15px; font-style: italic;
+  color: #ccc; letter-spacing: .04em;
+  transition: opacity .2s;
+}
+.sig-pad-outer.has-sig .sig-ghost { opacity: 0; }
+.sig-snap {
+  display: none;
+  width: 100%; height: 90px;
+  object-fit: contain;
+  border: 1.5px solid var(--ink); border-radius: 2px;
+  background: #fff;
+}
+.sig-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 5px;
+}
+.sig-status { font-size: 11px; font-weight: 700; color: var(--green); }
+.sig-clear {
+  font-family: var(--sans); font-size: 10px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1.5px solid var(--light); border-radius: 40px;
+  background: transparent; color: var(--muted); cursor: pointer;
+  transition: all .14s;
+}
+.sig-clear:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── Ongoing treatment table ── */
+.ongoing-head {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.ongoing-intro {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.75;
+  color: #333;
+  margin-bottom: 16px;
+}
+.ongoing-box {
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ongoing-row {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  align-items: stretch;
+  border-bottom: 1.5px solid var(--ink);
+}
+.ongoing-row:last-child { border-bottom: none; }
+.ongoing-cell {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ongoing-cell + .ongoing-cell {
+  border-left: 1.5px solid var(--ink);
+}
+.ongoing-cell-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* mini sig pad inside ongoing rows */
+.mini-sig-outer {
+  position: relative;
+  border: 1px solid var(--light);
+  border-radius: 1px;
+  background: #fff;
+  overflow: hidden;
+  cursor: crosshair;
+  flex: 1;
+}
+.mini-sig-outer.active { border-color: var(--teal); }
+.mini-sig-outer canvas {
+  display: block;
+  width: 100%;
+  height: 50px;
+  touch-action: none;
+}
+.mini-ghost {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 11px; font-style: italic;
+  color: #ccc;
+  transition: opacity .18s;
+}
+.mini-sig-outer.has-sig .mini-ghost { opacity: 0; }
+.mini-snap { display: none; width: 100%; height: 50px; object-fit: contain; background: #fff; }
+.mini-clear {
+  font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 2px 8px; border: 1px solid var(--light); border-radius: 40px;
+  background: transparent; color: var(--muted); cursor: pointer; margin-top: 4px;
+  transition: all .12s; align-self: flex-end;
+}
+.mini-clear:hover { border-color: var(--ink); color: var(--ink); }
+.mini-date {
+  border: none; border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  font-family: var(--serif); font-size: 13px; color: var(--ink);
+  padding: 3px 4px; outline: none; width: 100%;
+  transition: border-color .15s, background .15s;
+}
+.mini-date:focus { border-bottom-color: var(--teal); background: var(--teal-lt); }
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+#toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  font-family: var(--sans); font-size: 13.5px; font-weight: 600;
+  padding: 13px 22px; border-radius: 40px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.22);
+  opacity: 0; pointer-events: none;
+  transition: opacity .28s, transform .28s;
+  transform: translateY(12px); max-width: 360px; line-height: 1.5;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.success { background: var(--teal); color: #fff; }
+#toast.error   { background: var(--red);  color: #fff; }
+#toast.info    { background: #1c2b3a;     color: #fff; }
+
+/* ═══════════════════════════════════════════════
+   PROGRESS OVERLAY
+═══════════════════════════════════════════════ */
+#prog {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.52);
+  backdrop-filter: blur(4px);
+  z-index: 99999; align-items: center; justify-content: center;
+}
+#prog.active { display: flex; }
+.prog-card {
+  background: #fff; border-radius: 8px;
+  padding: 34px 50px; text-align: center; min-width: 300px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+.prog-spinner {
+  width: 34px; height: 34px;
+  border: 3px solid #e0eeec;
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+  margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.prog-card h4 {
+  font-family: var(--serif); font-size: 17px; color: var(--teal);
+  margin: 0 0 14px; font-weight: 700;
+}
+.prog-track { width: 100%; height: 5px; background: #e0eeec; border-radius: 3px; overflow: hidden; }
+.prog-fill {
+  height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold));
+  border-radius: 3px; width: 0%; transition: width .32s ease;
+}
+.prog-msg { font-size: 12px; color: var(--muted); margin-top: 9px; }
+
+/* ═══════════════════════════════════════════════
+   SUCCESS BANNER
+═══════════════════════════════════════════════ */
+.success-banner {
+  display: none;
+  background: var(--green-lt);
+  border: 1.5px solid #86efac;
+  border-radius: var(--r);
+  padding: 14px 20px;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: #14532d;
+  line-height: 1.65;
+}
+.success-banner.show { display: block; }
+.success-banner strong { display: block; margin-bottom: 4px; font-size: 14.5px; }
+
+/* ═══════════════════════════════════════════════
+   PRINT
+═══════════════════════════════════════════════ */
+@media print {
+  body { background: #fff; padding: 0; }
+  .toolbar, .setup-note, #toast, #prog { display: none !important; }
+  .doc { box-shadow: none; padding: 24px 36px; border-top: 3px solid #000; }
+  .sig-pad-outer  { display: none !important; }
+  .sig-footer     { display: none !important; }
+  .sig-snap       { display: block !important; }
+  .mini-sig-outer { display: none !important; }
+  .mini-clear     { display: none !important; }
+  .mini-snap      { display: block !important; }
+  .success-banner { display: none !important; }
+}
+
+/* Responsive */
+@media(max-width:600px) {
+  .doc { padding: 28px 20px 40px; }
+  .ongoing-row { grid-template-columns: 1fr; }
+  .ongoing-cell + .ongoing-cell { border-left: none; border-top: 1.5px solid var(--ink); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TOOLBAR ═══════════ -->
+<div class="toolbar">
+  <span class="toolbar-note">Fill all fields · Initial each area · Sign · Save or Submit</span>
+  <button class="tbtn tbtn-clear"  onclick="clearAll()">↺ Clear</button>
+  <button class="tbtn tbtn-pdf"    onclick="savePDF()">⬇ Save PDF</button>
+  <button class="tbtn tbtn-submit" onclick="submitForm()">✉ Submit</button>
+</div>
+
+
+
+<!-- ═══════════ DOCUMENT ═══════════ -->
+<div class="doc" id="formDoc">
+
+  <!-- Clinic badge -->
+  <div class="clinic-badge">
+    <div class="cb-name">ErinGlenWellness · 17624999 Canada Inc</div>
+    <div class="cb-addr">112 Henshaw Dr, Erin, NOB 1T0 · eringlenrmt@gmail.com</div>
+  </div>
+
+  <!-- Title -->
+  <div class="doc-title">Consent for Assessment and Treatment of<br/><span>Sensitive Areas</span></div>
+
+  <!-- Intro -->
+  <p class="intro-para">
+    In response to Ontario's <em>Protecting Patients Act, 2017</em>, the College of Massage Therapists of Ontario (CMTO) recently introduced new requirements for Massage Therapists ("MTs" or "RMTs"). The new requirements strengthen your involvement as a client in the consent process when treatment includes sensitive areas by requiring written consent, via the <em>'Consent for Assessment and Treatment of Sensitive Areas'</em> form, prior to treatment.
+  </p>
+
+  <hr class="rule"/>
+
+  <!-- Client + RMT names -->
+  <p class="prose">
+    I,&nbsp;<input type="text" id="clientName" class="fill-line fill-wide" placeholder="Client full name"/>&nbsp;(name), have requested assessment and/or treatment by this Registered Massage Therapist (RMT)&nbsp;<input type="text" id="rmtName" class="fill-line fill-wide" placeholder="RMT full name"/>&nbsp;(name) for treatment of the clinically relevant areas indicated below (please initial):
+  </p>
+
+  <!-- Areas to initial -->
+  <span class="area-label">Please initial each area that applies</span>
+  <ul class="area-list">
+    <li class="area-item">
+      <input type="text" class="initial-box" id="init_buttocks"   placeholder="Initial" maxlength="10"/>
+      <span class="area-name">Buttocks (gluteal muscles)</span>
+    </li>
+    <li class="area-item">
+      <input type="text" class="initial-box" id="init_chest"      placeholder="Initial" maxlength="10"/>
+      <span class="area-name">Chest Wall Muscles</span>
+    </li>
+    <li class="area-item">
+      <input type="text" class="initial-box" id="init_thigh"      placeholder="Initial" maxlength="10"/>
+      <span class="area-name">Upper Inner Thigh(s)</span>
+    </li>
+    <li class="area-item">
+      <input type="text" class="initial-box" id="init_breast"     placeholder="Initial" maxlength="10"/>
+      <span class="area-name">Breast(s)</span>
+    </li>
+  </ul>
+
+  <hr class="rule rule-bold"/>
+
+  <!-- RMT explained -->
+  <p class="bullet-head">The RMT has explained the following to me and I fully understand the proposed assessment and/or treatment:</p>
+  <ul class="bullet-list">
+    <li>The nature of the assessment, including the clinical reason(s) for assessment of the above area(s) and the draping methods to be used</li>
+    <li>The expected benefits of the assessment</li>
+    <li>The potential risks of the assessment</li>
+    <li>The potential side effects of the assessment</li>
+    <li>That consent is voluntary</li>
+    <li>That I can withdraw or alter my consent at any time.</li>
+  </ul>
+
+  <!-- ── PRIMARY CONSENT BOX ── -->
+  <div class="consent-box">
+    <p class="cb-intro">I voluntarily give my informed consent for the assessment and/or treatment as discussed and outlined above.</p>
+
+    <!-- Client name print -->
+    <div class="field-group" style="margin-bottom:14px">
+      <span class="field-label">Client Name (print)</span>
+      <input type="text" id="clientNamePrint" class="field-input" placeholder="Print your full name"/>
+    </div>
+
+    <!-- Signature + Date row -->
+    <div style="display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:end">
+      <div>
+        <span class="sig-wrap-label">Client Signature <span style="color:var(--red)">*</span></span>
+        <!-- Canvas pad (hidden during PDF) -->
+        <div class="sig-pad-outer" id="mainSigWrap">
+          <canvas id="mainSigCanvas"></canvas>
+          <div class="sig-ghost">Sign here…</div>
+        </div>
+        <div class="sig-footer">
+          <span class="sig-status" id="mainSigStatus"></span>
+          <button class="sig-clear" onclick="clearMainSig()">↺ Clear</button>
+        </div>
+        <!-- Static snapshot for PDF -->
+        <img id="mainSigSnap" class="sig-snap" alt="Client Signature"/>
+      </div>
+      <div class="field-group">
+        <span class="field-label">Date <span style="color:var(--red)">*</span></span>
+        <input type="date" id="consentDate" class="field-input"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ONGOING TREATMENT ── -->
+  <p class="ongoing-head">Ongoing Treatment:</p>
+  <p class="ongoing-intro">
+    I am aware that the treatment of the above indicated area(s) is part of a treatment plan which has been discussed with me by my RMT. I confirm that, on the following date(s), the RMT has reviewed the treatment plan and I provide my informed consent.
+  </p>
+
+  <div class="ongoing-box" id="ongoingBox">
+    <!-- Row 1 -->
+    <div class="ongoing-row">
+      <div class="ongoing-cell" id="oc1">
+        <span class="ongoing-cell-label">Client Signature</span>
+        <div class="mini-sig-outer" id="mini1Wrap"><canvas id="mini1Canvas"></canvas><div class="mini-ghost">Sign…</div></div>
+        <img id="mini1Snap" class="mini-snap" alt="Signature"/>
+        <button class="mini-clear" onclick="clearMini(1)">↺ Clear</button>
+      </div>
+      <div class="ongoing-cell">
+        <span class="ongoing-cell-label">Date</span>
+        <input type="date" id="mini1Date" class="mini-date"/>
+      </div>
+    </div>
+    <!-- Row 2 -->
+    <div class="ongoing-row">
+      <div class="ongoing-cell" id="oc2">
+        <span class="ongoing-cell-label">Client Signature</span>
+        <div class="mini-sig-outer" id="mini2Wrap"><canvas id="mini2Canvas"></canvas><div class="mini-ghost">Sign…</div></div>
+        <img id="mini2Snap" class="mini-snap" alt="Signature"/>
+        <button class="mini-clear" onclick="clearMini(2)">↺ Clear</button>
+      </div>
+      <div class="ongoing-cell">
+        <span class="ongoing-cell-label">Date</span>
+        <input type="date" id="mini2Date" class="mini-date"/>
+      </div>
+    </div>
+    <!-- Row 3 -->
+    <div class="ongoing-row">
+      <div class="ongoing-cell" id="oc3">
+        <span class="ongoing-cell-label">Client Signature</span>
+        <div class="mini-sig-outer" id="mini3Wrap"><canvas id="mini3Canvas"></canvas><div class="mini-ghost">Sign…</div></div>
+        <img id="mini3Snap" class="mini-snap" alt="Signature"/>
+        <button class="mini-clear" onclick="clearMini(3)">↺ Clear</button>
+      </div>
+      <div class="ongoing-cell">
+        <span class="ongoing-cell-label">Date</span>
+        <input type="date" id="mini3Date" class="mini-date"/>
+      </div>
+    </div>
+    <!-- Row 4 -->
+    <div class="ongoing-row">
+      <div class="ongoing-cell" id="oc4">
+        <span class="ongoing-cell-label">Client Signature</span>
+        <div class="mini-sig-outer" id="mini4Wrap"><canvas id="mini4Canvas"></canvas><div class="mini-ghost">Sign…</div></div>
+        <img id="mini4Snap" class="mini-snap" alt="Signature"/>
+        <button class="mini-clear" onclick="clearMini(4)">↺ Clear</button>
+      </div>
+      <div class="ongoing-cell">
+        <span class="ongoing-cell-label">Date</span>
+        <input type="date" id="mini4Date" class="mini-date"/>
+      </div>
+    </div>
+    <!-- Row 5 -->
+    <div class="ongoing-row">
+      <div class="ongoing-cell" id="oc5">
+        <span class="ongoing-cell-label">Client Signature</span>
+        <div class="mini-sig-outer" id="mini5Wrap"><canvas id="mini5Canvas"></canvas><div class="mini-ghost">Sign…</div></div>
+        <img id="mini5Snap" class="mini-snap" alt="Signature"/>
+        <button class="mini-clear" onclick="clearMini(5)">↺ Clear</button>
+      </div>
+      <div class="ongoing-cell">
+        <span class="ongoing-cell-label">Date</span>
+        <input type="date" id="mini5Date" class="mini-date"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success banner -->
+  <div class="success-banner" id="successBanner">
+    <strong>✓ Form submitted successfully!</strong>
+    ErinGlenWellness has received your signed consent form. A confirmation has been sent to your email address, and a PDF copy has been saved to your device.
+  </div>
+
+</div><!-- /doc -->
+
+<!-- Toast -->
+<div id="toast"></div>
+<!-- Progress -->
+<div id="prog"><div class="prog-card"><div class="prog-spinner"></div><h4 id="progTitle">Working…</h4><div class="prog-track"><div class="prog-fill" id="progFill"></div></div><div class="prog-msg" id="progMsg">Please wait</div></div></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+/* ── CONFIG ── */
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwJ-5FhsYhY4sHfsWEYROjceb0tmFMWTg_yOPHfXo6BKCWi6b7WwzjfRVQ0OKU2iwJp/exec'; // ← paste your GAS Web App URL here
+
+/* ── TOAST ── */
+function showToast(msg, type='info', dur=4500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='show '+type;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+/* ── PROGRESS ── */
+function progShow(t){ document.getElementById('progTitle').textContent=t; progSet(0,'Please wait, do not close this page…'); document.getElementById('prog').classList.add('active'); }
+function progSet(p,m){ document.getElementById('progFill').style.width=p+'%'; if(m) document.getElementById('progMsg').textContent=m; }
+function progHide(){ document.getElementById('prog').classList.remove('active'); }
+
+/* ════════════════════════
+   SIGNATURE PAD FACTORY
+   Creates a pad on any canvas element
+════════════════════════ */
+function makePad(canvasId, wrapId, statusId, snapId, miniMode){
+  const canvas  = document.getElementById(canvasId);
+  const wrap    = document.getElementById(wrapId);
+  const statusEl= statusId ? document.getElementById(statusId) : null;
+  const snap    = document.getElementById(snapId);
+  const ctx     = canvas.getContext('2d');
+  let drawing=false, lx=0, ly=0, hasSig=false;
+  const h = miniMode ? 50 : 90;
+
+  function resize(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=canvas.getBoundingClientRect();
+    const prev=hasSig?canvas.toDataURL():null;
+    canvas.width=Math.round(rect.width*dpr);
+    canvas.height=Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    style();
+    if(prev){const i=new Image();i.onload=()=>ctx.drawImage(i,0,0,rect.width,h);i.src=prev;}
+  }
+  function style(){ ctx.strokeStyle='#111'; ctx.lineWidth=miniMode?1.5:2; ctx.lineCap='round'; ctx.lineJoin='round'; }
+  function pos(e){ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; }
+  function start(e){ e.preventDefault(); drawing=true; const p=pos(e); [lx,ly]=[p.x,p.y]; ctx.beginPath(); ctx.arc(p.x,p.y,.6,0,Math.PI*2); ctx.fillStyle='#111'; ctx.fill(); style(); hasSig=true; wrap.classList.add('has-sig','active'); wrap.classList.remove('err'); }
+  function draw(e){ if(!drawing)return; e.preventDefault(); const p=pos(e); ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y); ctx.stroke(); [lx,ly]=[p.x,p.y]; }
+  function stop(){ if(!drawing)return; drawing=false; capture(); }
+  function capture(){
+    if(hasSig){
+      snap.src=canvas.toDataURL('image/png');
+      if(statusEl) statusEl.innerHTML='✓ Captured';
+    }
+  }
+
+  canvas.addEventListener('mousedown',  start);
+  canvas.addEventListener('mousemove',  draw);
+  canvas.addEventListener('mouseup',    stop);
+  canvas.addEventListener('mouseleave', stop);
+  canvas.addEventListener('touchstart', start,{passive:false});
+  canvas.addEventListener('touchmove',  draw, {passive:false});
+  canvas.addEventListener('touchend',   stop);
+
+  window.addEventListener('load',   resize);
+  window.addEventListener('resize', ()=>{clearTimeout(canvas._rt); canvas._rt=setTimeout(resize,120);});
+  window.addEventListener('beforeprint', capture);
+  if(window.matchMedia){window.matchMedia('print').addEventListener('change',e=>{if(e.matches)capture();});}
+
+  return {
+    capture,
+    get hasSig(){ return hasSig; },
+    clear(){
+      const r=canvas.getBoundingClientRect();
+      ctx.clearRect(0,0,r.width,r.height);
+      hasSig=false; drawing=false;
+      wrap.classList.remove('has-sig','active','err');
+      snap.src='';
+      if(statusEl) statusEl.textContent='';
+    }
+  };
+}
+
+/* ── Init pads ── */
+const mainPad  = makePad('mainSigCanvas','mainSigWrap','mainSigStatus','mainSigSnap',false);
+const miniPads = [null]; // 1-indexed
+for(let i=1;i<=5;i++){
+  miniPads.push(makePad(`mini${i}Canvas`,`mini${i}Wrap`,null,`mini${i}Snap`,true));
+}
+
+function clearMainSig(){ mainPad.clear(); }
+function clearMini(n){ miniPads[n].clear(); }
+
+/* ── Auto-fill today's date ── */
+window.addEventListener('load',()=>{
+  const t=new Date(), pad=n=>String(n).padStart(2,'0');
+  const today=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+  document.getElementById('consentDate').value=today;
+});
+
+/* ── Validation ── */
+function validate(){
+  const name=document.getElementById('clientName');
+  const rmt =document.getElementById('rmtName');
+  const date=document.getElementById('consentDate');
+  [name,rmt,date].forEach(el=>el.classList.remove('err'));
+  document.getElementById('mainSigWrap').classList.remove('err');
+
+  if(!name.value.trim()){ name.classList.add('err'); showToast('⚠ Please enter the client name','error'); name.focus(); return false; }
+  if(!rmt.value.trim()){ rmt.classList.add('err'); showToast('⚠ Please enter the RMT name','error'); rmt.focus(); return false; }
+  if(!date.value){ date.classList.add('err'); showToast('⚠ Please enter the consent date','error'); date.focus(); return false; }
+  if(!mainPad.hasSig){ document.getElementById('mainSigWrap').classList.add('err'); showToast('⚠ Please sign the consent box','error',5000); document.getElementById('mainSigWrap').scrollIntoView({behavior:'smooth',block:'center'}); return false; }
+  return true;
+}
+
+/* ── File name from client name ── */
+function buildFileName(){
+  const raw=document.getElementById('clientName').value.trim();
+  const date=document.getElementById('consentDate').value.replace(/-/g,'');
+  const safe=raw.replace(/[^a-zA-Z0-9 '\-]/g,'').trim().replace(/\s+/g,'_')||'Client';
+  return `SensitiveConsent_${safe}_${date}.pdf`;
+}
+
+/* ── Swap UI for PDF rendering ── */
+function hideDynamic(){
+  const els=['mainSigWrap','mainSigStatus','.sig-footer','.sig-ghost',
+             '#prog','.toolbar','.setup-note','#successBanner'];
+  // granular hide
+  document.getElementById('mainSigWrap').style.display='none';
+  document.querySelector('.sig-footer').style.display='none';
+  document.getElementById('mainSigSnap').style.display='block';
+  document.querySelectorAll('.mini-sig-outer').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.mini-snap').forEach(el=>el.style.display='block');
+  document.querySelectorAll('.mini-clear').forEach(el=>el.style.display='none');
+  document.querySelector('.toolbar').style.display='none';
+  const sn=document.getElementById('setupNote');
+  if(sn) sn.style.display='none';
+  const sb=document.getElementById('successBanner');
+  if(sb) sb.style.display='none';
+}
+function showDynamic(successWasShown){
+  document.getElementById('mainSigWrap').style.display='';
+  document.querySelector('.sig-footer').style.display='';
+  document.getElementById('mainSigSnap').style.display='';
+  document.querySelectorAll('.mini-sig-outer').forEach(el=>el.style.display='');
+  document.querySelectorAll('.mini-snap').forEach(el=>el.style.display='');
+  document.querySelectorAll('.mini-clear').forEach(el=>el.style.display='');
+  document.querySelector('.toolbar').style.display='';
+  const sn=document.getElementById('setupNote');
+  if(sn) sn.style.display='';
+  if(successWasShown){
+    const sb=document.getElementById('successBanner');
+    if(sb) sb.style.display='block';
+  }
+}
+
+/* ── Generate PDF ── */
+async function generatePDF(){
+  // Capture all sigs at max res first
+  mainPad.capture();
+  miniPads.slice(1).forEach(p=>p.capture());
+
+  // Store original placeholder attributes to restore later
+  const placeholderMap = new Map();
+  document.querySelectorAll('input[placeholder]').forEach(el => {
+    placeholderMap.set(el, el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', '');
+  });
+
+  const successShown=document.getElementById('successBanner').classList.contains('show');
+  hideDynamic();
+  progSet(25,'Rendering…');
+  await new Promise(r=>setTimeout(r,120));
+
+  const doc=document.getElementById('formDoc');
+  const cvs=await html2canvas(doc,{scale:2,useCORS:true,logging:false,backgroundColor:'#fefefe',allowTaint:true});
+
+  progSet(65,'Building PDF…');
+  await new Promise(r=>setTimeout(r,60));
+
+  const {jsPDF}=window.jspdf;
+  const imgData=cvs.toDataURL('image/jpeg',.93);
+  const ratio=cvs.height/cvs.width;
+  const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+  const aW=pdf.internal.pageSize.getWidth();
+  const aH=pdf.internal.pageSize.getHeight();
+  const fullH=aW*ratio;
+  let posY=0,page=0;
+  while(posY<fullH){ if(page>0)pdf.addPage(); pdf.addImage(imgData,'JPEG',0,-posY,aW,fullH,undefined,'FAST'); posY+=aH; page++; }
+
+  progSet(90,'Finalising…');
+  await new Promise(r=>setTimeout(r,60));
+
+  // Restore placeholders
+  placeholderMap.forEach((placeholder, el) => {
+    el.setAttribute('placeholder', placeholder);
+  });
+
+  showDynamic(successShown);
+  return pdf;
+}
+
+/* ── Save PDF locally ── */
+async function savePDF(){
+  if(!validate()) return;
+  progShow('Generating PDF…');
+  try{
+    const pdf=await generatePDF();
+    progSet(100,'Done!');
+    pdf.save(buildFileName());
+    await new Promise(r=>setTimeout(r,400));
+    progHide();
+    showToast('✓ PDF saved to your downloads folder','success');
+  }catch(err){
+    progHide(); console.error(err);
+    showToast('⚠ PDF generation failed — try Ctrl+P to print instead','error',6000);
+  }
+}
+
+/* ── Submit form ── */
+async function submitForm(){
+  if(!validate()) return;
+
+  if(GAS_ENDPOINT==='YOUR_GOOGLE_APPS_SCRIPT_URL'){
+    showToast('⚠ Submit endpoint not configured — saving PDF locally instead','error',6000);
+    await savePDF(); return;
+  }
+
+  const clientName  = document.getElementById('clientName').value.trim();
+  const rmtName     = document.getElementById('rmtName').value.trim();
+  const date        = document.getElementById('consentDate').value;
+  const areas       = [];
+  if(document.getElementById('init_buttocks').value.trim()) areas.push('Buttocks (gluteal muscles)');
+  if(document.getElementById('init_chest').value.trim())    areas.push('Chest Wall Muscles');
+  if(document.getElementById('init_thigh').value.trim())    areas.push('Upper Inner Thigh(s)');
+  if(document.getElementById('init_breast').value.trim())   areas.push('Breast(s)');
+
+  progShow('Submitting form…');
+  try{
+    progSet(10,'Generating PDF…');
+    const pdf=await generatePDF();
+    const b64=pdf.output('datauristring').split(',')[1];
+
+    progSet(55,'Sending…');
+    const payload={
+      clientName, rmtName, consentDate:date,
+      areasInitialled: areas.join(', ')||'None initialled',
+      fileName: buildFileName(),
+      pdfBase64: b64,
+    };
+
+    await fetch(GAS_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload),
+    });
+
+    progSet(95,'Almost done…'); await new Promise(r=>setTimeout(r,300));
+    progSet(100,'Submitted!'); progHide();
+
+    pdf.save(buildFileName());
+
+    document.getElementById('successBanner').classList.add('show');
+    document.getElementById('successBanner').scrollIntoView({behavior:'smooth',block:'nearest'});
+    showToast(`✓ Submitted! ErinGlenWellness has been notified.`,'success',7000);
+
+  }catch(err){
+    progHide(); console.error(err);
+    showToast('⚠ Could not reach server — PDF saved locally instead','error',6000);
+    await savePDF();
+  }
+}
+
+/* ── Clear all ── */
+function clearAll(){
+  if(!confirm('Clear all fields and all signatures? This cannot be undone.')) return;
+  ['clientName','rmtName','clientNamePrint',
+   'init_buttocks','init_chest','init_thigh','init_breast'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const t=new Date(),pad=n=>String(n).padStart(2,'0');
+  document.getElementById('consentDate').value=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+  for(let i=1;i<=5;i++) document.getElementById(`mini${i}Date`).value='';
+  clearMainSig();
+  for(let i=1;i<=5;i++) clearMini(i);
+  document.getElementById('successBanner').classList.remove('show');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Receipt / Invoice – ErinGlenWellness RMT</title>
+
+<!-- PDF libs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+/* ─────────────────────────────────────────────
+   FONTS & RESET
+───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:    #2d7d6e;
+  --teal-dk: #1e5a4e;
+  --teal-lt: #e8f4f2;
+  --gold:    #b07030;
+  --gold-lt: #fef6e8;
+  --ink:     #0f0f0f;
+  --muted:   #5a6470;
+  --border:  #c8d0cc;
+  --light:   #e8eeeb;
+  --paper:   #ffffff;
+  --bg:      #dde3df;
+  --red:     #b91c1c;
+  --green:   #166534;
+  --green-lt:#f0fdf4;
+  --serif:   'Libre Baskerville', Georgia, serif;
+  --sans:    'Source Sans 3', 'Helvetica Neue', sans-serif;
+  --r:       3px;
+}
+
+body{
+  background: var(--bg);
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  padding: 20px 12px 100px;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   TOOLBAR
+───────────────────────────────────────────── */
+.toolbar{
+  max-width: 900px; margin: 0 auto 14px;
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.toolbar-brand{
+  font-family: var(--serif); font-size: 13px; font-weight: 700;
+  color: var(--teal-dk); margin-right: auto;
+  display: flex; align-items: center; gap: 8px;
+}
+.toolbar-brand span{ font-size: 10px; font-weight: 400; color: var(--muted); font-family: var(--sans); }
+.tbtn{
+  font-family: var(--sans); font-size: 11.5px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 9px 22px; border: none; border-radius: 40px;
+  cursor: pointer; display: inline-flex; align-items: center;
+  gap: 7px; transition: all .17s; white-space: nowrap;
+}
+.tbtn-clear { background: transparent; color: var(--muted); border: 1.5px solid #aaa; }
+.tbtn-clear:hover { border-color: var(--ink); color: var(--ink); }
+.tbtn-pdf   { background: var(--teal-dk); color:#fff; box-shadow: 0 3px 14px rgba(30,90,78,.28); }
+.tbtn-pdf:hover { background: #133d34; }
+.tbtn-submit{ background: var(--gold); color:#fff; box-shadow: 0 3px 14px rgba(176,112,48,.28); }
+.tbtn-submit:hover { background: #8a5220; }
+.tbtn:disabled{ opacity:.45; cursor:not-allowed; pointer-events:none; }
+
+/* Setup note */
+.setup-note{
+  max-width:900px; margin:0 auto 14px;
+  background:var(--gold-lt); border:1px solid #e8c87a;
+  border-radius:var(--r); padding:10px 16px; font-size:12px; color:#6b3e00;
+  display:flex; align-items:flex-start; gap:9px; line-height:1.65;
+}
+.setup-note button{ margin-left:auto; flex-shrink:0; background:none; border:none; font-size:17px; color:#a16207; cursor:pointer; padding:0 0 0 12px; line-height:1; }
+
+/* ─────────────────────────────────────────────
+   PAPER DOC
+───────────────────────────────────────────── */
+.doc{
+  max-width: 900px; margin: 0 auto;
+  background: var(--paper);
+  box-shadow: 0 6px 40px rgba(0,0,0,.18);
+  border-top: 5px solid var(--teal-dk);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* ── HEADER BAND ── */
+.doc-header{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0;
+  border-bottom: 2px solid var(--teal-dk);
+}
+.hdr-left{
+  padding: 22px 28px 20px;
+  background: var(--teal-dk);
+  color: #fff;
+}
+.hdr-left .clinic-name{
+  font-family: var(--serif); font-size: 20px; font-weight: 700;
+  letter-spacing: .04em; line-height: 1.1; margin-bottom: 4px;
+}
+.hdr-left .clinic-sub{
+  font-size: 11px; opacity: .80; line-height: 1.55; letter-spacing: .03em;
+}
+.hdr-right{
+  padding: 22px 32px 20px;
+  background: var(--teal-lt);
+  text-align: right;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.hdr-right .receipt-title{
+  font-family: var(--serif); font-size: 18px; font-weight: 700;
+  color: var(--teal-dk); letter-spacing: .06em; line-height: 1.2;
+}
+.hdr-right .receipt-sub{
+  font-size: 11px; color: var(--muted); margin-top: 3px; letter-spacing: .04em;
+}
+
+/* ── INNER SECTIONS ── */
+.doc-body{ padding: 0 28px 28px; }
+
+/* Meta row: Invoice info left | Patient info right */
+.meta-grid{
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
+  gap: 0;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 0;
+}
+.meta-divider{ background: var(--border); margin: 16px 0; }
+.meta-col{ padding: 18px 20px; }
+.meta-col:first-child{ padding-left: 0; }
+.meta-col:last-child{ padding-right: 0; }
+
+.meta-title{
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--teal-dk);
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--light);
+}
+
+/* Field rows inside meta */
+.frow{
+  display: flex; align-items: baseline;
+  gap: 6px; margin-bottom: 7px;
+}
+.frow:last-child{ margin-bottom: 0; }
+.flabel{
+  font-size: 10.5px; font-weight: 700; color: var(--muted);
+  white-space: nowrap; min-width: 62px;
+}
+.finput{
+  flex: 1; border: none; border-bottom: 1.5px solid var(--ink);
+  background: transparent; font-family: var(--serif);
+  font-size: 12.5px; color: var(--ink);
+  padding: 2px 4px; outline: none;
+  transition: border-color .15s, background .15s;
+  min-width: 0;
+}
+.finput:focus{ border-bottom-color: var(--teal); background: var(--teal-lt); }
+.finput.err{ border-bottom-color: var(--red); }
+.finput::placeholder{ font-size: 10.5px; color: #bbb; }
+
+/* ── TREATMENT DETAILS ── */
+.section-title{
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--teal-dk);
+  padding: 12px 0 8px; margin-top: 0;
+  border-top: 1.5px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.add-row-btn{
+  font-family: var(--sans); font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 12px; border: 1.5px solid var(--teal);
+  border-radius: 40px; background: transparent; color: var(--teal);
+  cursor: pointer; transition: all .14s; margin-left: auto;
+}
+.add-row-btn:hover{ background: var(--teal); color: #fff; }
+
+.treatment-table{ width: 100%; border-collapse: collapse; margin-bottom: 0; }
+.treatment-table thead tr{
+  background: var(--teal-dk);
+}
+.treatment-table thead th{
+  padding: 8px 10px; text-align: left;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: #fff;
+  border-right: 1px solid rgba(255,255,255,.15);
+}
+.treatment-table thead th:last-child{ border-right: none; }
+.treatment-table tbody tr{ border-bottom: 1px solid var(--light); }
+.treatment-table tbody tr:hover td{ background: #f8faf9; }
+.treatment-table tbody td{
+  padding: 6px 6px; vertical-align: middle;
+}
+
+/* select in table */
+.t-select{
+  width: 100%; border: none; border-bottom: 1.5px solid var(--border);
+  background: transparent; font-family: var(--serif);
+  font-size: 12px; color: var(--ink);
+  padding: 3px 4px 2px; outline: none; cursor: pointer;
+  transition: border-color .15s, background .15s;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 4px center;
+  padding-right: 18px;
+}
+.t-select:focus{ border-bottom-color: var(--teal); background-color: var(--teal-lt); }
+
+/* text input in table */
+.t-input{
+  width: 100%; border: none; border-bottom: 1.5px solid var(--border);
+  background: transparent; font-family: var(--serif);
+  font-size: 12px; color: var(--ink);
+  padding: 3px 4px; outline: none;
+  transition: border-color .15s, background .15s;
+}
+.t-input:focus{ border-bottom-color: var(--teal); background: var(--teal-lt); }
+.t-input.right{ text-align: right; }
+.t-input:read-only{ color: var(--muted); cursor: default; }
+.t-input:read-only:focus{ background: transparent; border-bottom-color: var(--border); }
+
+/* delete row btn */
+.del-btn{
+  background: none; border: none; cursor: pointer;
+  color: #ccc; font-size: 15px; line-height: 1;
+  transition: color .13s; padding: 0 4px;
+}
+.del-btn:hover{ color: var(--red); }
+
+/* col widths */
+.col-svc   { width: 48%; }
+.col-dur   { width: 12%; text-align: center; }
+.col-price { width: 13%; text-align: right; }
+.col-amt   { width: 13%; text-align: right; }
+.col-del   { width: 5%;  text-align: center; }
+
+/* ── PAYMENT + TOTALS ── */
+.payment-grid{
+  display: grid; grid-template-columns: 1fr 2px 260px;
+  gap: 0; border-top: 1.5px solid var(--border);
+  padding-top: 0;
+}
+.pay-col{ padding: 16px 20px; }
+.pay-col:first-child{ padding-left: 0; }
+.pay-col:last-child{ padding-right: 0; }
+.pay-divider{ background: var(--border); margin: 14px 0; }
+
+.totals-table{ width: 100%; border-collapse: collapse; }
+.totals-table td{ padding: 6px 8px; font-size: 13px; border-bottom: 1px solid var(--light); }
+.totals-table td:first-child{ color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.totals-table td:last-child{ text-align: right; font-family: var(--serif); font-weight: 700; }
+.totals-table .total-row td{ border-top: 2px solid var(--teal-dk); border-bottom: 2px solid var(--teal-dk); }
+.totals-table .total-row td:first-child{ color: var(--teal-dk); font-size: 12px; }
+.totals-table .total-row td:last-child{ color: var(--teal-dk); font-size: 15px; }
+
+.total-val{
+  border: none; background: transparent; font-family: var(--serif);
+  font-weight: 700; font-size: 13px; color: var(--ink);
+  text-align: right; outline: none; width: 100%;
+  transition: color .15s;
+}
+.total-val.balance{ font-size: 16px; color: var(--teal-dk); }
+
+/* Amount paid is editable */
+.amt-paid-input{
+  border: none; border-bottom: 1.5px solid var(--border);
+  background: transparent; font-family: var(--serif);
+  font-weight: 700; font-size: 13px; color: var(--ink);
+  text-align: right; outline: none; width: 80px;
+  transition: border-color .15s, background .15s;
+}
+.amt-paid-input:focus{ border-bottom-color: var(--teal); background: var(--teal-lt); }
+
+/* ── DECLARATION ── */
+.declaration{
+  border-top: 1.5px solid var(--border);
+  padding: 14px 0 8px; margin: 0;
+}
+.decl-title{
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--teal-dk); margin-bottom: 10px;
+}
+.decl-text{
+  font-family: var(--serif); font-size: 11.5px; font-style: italic;
+  color: var(--muted); line-height: 1.65; margin-bottom: 14px;
+}
+.sig-grid{
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 0; align-items: end; margin-bottom: 10px;
+}
+.sig-col{ display: flex; flex-direction: column; gap: 4px; }
+.sig-divider-v{ width: 24px; }
+.sig-lbl{ font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+
+/* signature pad */
+.sp-outer{
+  position: relative; border: 1.5px solid var(--border);
+  border-radius: var(--r); background: #fdfdfc; overflow: hidden;
+  cursor: crosshair; transition: border-color .18s;
+}
+.sp-outer.active{ border-color: var(--teal); box-shadow: 0 0 0 3px rgba(45,125,110,.1); }
+.sp-outer.err{ border-color: var(--red); }
+.sp-outer canvas{ display: block; width: 100%; height: 70px; touch-action: none; }
+.sp-ghost{
+  position: absolute; inset: 0; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 12px; font-style: italic; color: #ccc;
+  transition: opacity .2s;
+}
+.sp-outer.has-sig .sp-ghost{ opacity: 0; }
+.sp-snap{
+  display: none; width: 100%; height: 70px;
+  object-fit: contain; border: 1.5px solid var(--border);
+  border-radius: var(--r); background: #fdfdfc;
+}
+.sp-foot{
+  display: flex; align-items: center;
+  justify-content: space-between; margin-top: 4px;
+}
+.sp-status{ font-size: 10px; font-weight: 700; color: var(--green); }
+.sp-clear{
+  font-family: var(--sans); font-size: 9px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 11px; border: 1.5px solid var(--light);
+  border-radius: 40px; background: transparent;
+  color: var(--muted); cursor: pointer; transition: all .13s;
+}
+.sp-clear:hover{ border-color: var(--ink); color: var(--ink); }
+
+/* ── FOOTER ── */
+.doc-footer{
+  background: var(--teal-dk); color: rgba(255,255,255,.70);
+  font-size: 10px; text-align: center; padding: 10px 20px;
+  line-height: 1.6; letter-spacing: .04em;
+}
+
+/* ── SUCCESS BANNER ── */
+.success-banner{
+  display: none; background: var(--green-lt);
+  border: 1.5px solid #86efac; border-radius: var(--r);
+  padding: 14px 20px; margin: 16px 28px 0; font-size: 13.5px; color: #14532d; line-height: 1.65;
+}
+.success-banner.show{ display: block; }
+.success-banner strong{ display: block; font-size: 14.5px; margin-bottom: 4px; }
+
+/* ─────────────────────────────────────────────
+   TOAST & PROGRESS
+───────────────────────────────────────────── */
+#toast{
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  padding: 12px 22px; border-radius: 40px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.22);
+  opacity: 0; pointer-events: none;
+  transition: opacity .26s, transform .26s;
+  transform: translateY(12px); max-width: 360px; line-height: 1.5;
+}
+#toast.show{ opacity: 1; transform: translateY(0); }
+#toast.success{ background: var(--teal-dk); color: #fff; }
+#toast.error  { background: var(--red);     color: #fff; }
+#toast.info   { background: #1c2b3a;         color: #fff; }
+
+#prog{
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.52); backdrop-filter: blur(4px);
+  z-index: 99999; align-items: center; justify-content: center;
+}
+#prog.active{ display: flex; }
+.prog-card{
+  background: #fff; border-radius: 8px;
+  padding: 32px 48px; text-align: center; min-width: 290px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+.prog-spinner{
+  width: 32px; height: 32px;
+  border: 3px solid #e0eeec; border-top-color: var(--teal);
+  border-radius: 50%; animation: spin .85s linear infinite;
+  margin: 0 auto 13px;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.prog-card h4{ font-family: var(--serif); font-size: 16px; color: var(--teal-dk); margin: 0 0 14px; }
+.prog-track{ width: 100%; height: 5px; background: #e0eeec; border-radius: 3px; overflow: hidden; }
+.prog-fill{ height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); border-radius: 3px; width: 0%; transition: width .3s ease; }
+.prog-msg{ font-size: 11.5px; color: var(--muted); margin-top: 9px; }
+
+/* ─────────────────────────────────────────────
+   PRINT / PDF RENDER
+───────────────────────────────────────────── */
+@media print{
+  body{ background:#fff; padding:0; }
+  .toolbar,.setup-note,#toast,#prog,
+  .success-banner,.del-btn,.add-row-btn{ display:none !important; }
+  .doc{ box-shadow:none; }
+  .sp-outer,.sp-foot,.sp-ghost{ display:none !important; }
+  .sp-snap{ display:block !important; }
+  .t-select{ background-image:none; }
+}
+
+/* Responsive */
+@media(max-width:680px){
+  .meta-grid{ grid-template-columns: 1fr; }
+  .meta-divider{ display:none; }
+  .payment-grid{ grid-template-columns: 1fr; }
+  .pay-divider{ display:none; }
+  .sig-grid{ grid-template-columns: 1fr; gap:14px; }
+  .sig-divider-v{ display:none; }
+  .doc-header{ grid-template-columns: 1fr; }
+  .hdr-right{ text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ TOOLBAR ══════════ -->
+<div class="toolbar">
+  <div class="toolbar-brand">
+    ErinGlenWellness
+    <span>RMT Invoice / Receipt</span>
+  </div>
+  <button class="tbtn tbtn-clear"  onclick="clearAll()">↺ Clear</button>
+  <button class="tbtn tbtn-pdf"    onclick="savePDF()">⬇ Save PDF</button>
+  <button class="tbtn tbtn-submit" onclick="submitForm()">✉ Submit</button>
+</div>
+
+
+<!-- ══════════ DOCUMENT ══════════ -->
+<div class="doc" id="invoiceDoc">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="hdr-left">
+      <div class="clinic-name">ERINGLENWELLNESS</div>
+      <div class="clinic-sub">
+        17624999 CANADA INC<br/>
+        112 Henshaw Dr, Erin, NOB 1T0<br/>
+        eringlenrmt@gmail.com
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="receipt-title">RECEIPT / INVOICE</div>
+      <div class="receipt-sub">Registered Massage Therapy</div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- META: Invoice info + Patient info -->
+    <div class="meta-grid">
+
+      <!-- Invoice info -->
+      <div class="meta-col">
+        <div class="meta-title">Invoice Information</div>
+        <div class="frow">
+          <span class="flabel">Invoice&nbsp;#</span>
+          <input type="text" id="invoiceNum" class="finput" placeholder="e.g. INV-001"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">Date</span>
+          <input type="date" id="invoiceDate" class="finput"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">Time</span>
+          <input type="time" id="invoiceTime" class="finput"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">RMT</span>
+          <input type="text" id="rmtName" class="finput" placeholder="RMT full name"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">RMT Reg&nbsp;#</span>
+          <input type="text" id="rmtReg" class="finput" placeholder="Registration number"/>
+        </div>
+      </div>
+
+      <div class="meta-divider"></div>
+
+      <!-- Patient info -->
+      <div class="meta-col">
+        <div class="meta-title">Patient / Client Information</div>
+        <div class="frow">
+          <span class="flabel">Full Name</span>
+          <input type="text" id="patientName" class="finput" placeholder="First and Last name"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">Address</span>
+          <input type="text" id="patientAddr" class="finput" placeholder="Street address"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">City / Postal</span>
+          <input type="text" id="patientCity" class="finput" placeholder="City, Province  Postal Code"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">Phone</span>
+          <input type="tel" id="patientPhone" class="finput" placeholder="(000) 000-0000"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">DOB</span>
+          <input type="date" id="patientDOB" class="finput"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREATMENT DETAILS -->
+    <div class="section-title">
+      Treatment Details
+      <button class="add-row-btn" onclick="addTreatmentRow()">+ Add Row</button>
+    </div>
+    <table class="treatment-table" id="treatmentTable">
+      <thead>
+        <tr>
+          <th class="col-svc">Service / Treatment</th>
+          <th class="col-dur" style="text-align:center">Duration&nbsp;(min)</th>
+          <th class="col-price" style="text-align:right">Unit Price</th>
+          <th class="col-amt"  style="text-align:right">Amount</th>
+          <th class="col-del"></th>
+        </tr>
+      </thead>
+      <tbody id="treatmentBody">
+        <!-- rows injected by JS -->
+      </tbody>
+    </table>
+
+    <!-- PAYMENT + TOTALS -->
+    <div class="payment-grid" style="margin-top:0; padding-top:0; border-top:none;">
+      <!-- Payment info -->
+      <div class="pay-col">
+        <div class="meta-title" style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--light);">Payment Information</div>
+        <div class="frow">
+          <span class="flabel">Payment Method</span>
+          <select id="payMethod" class="t-select finput" style="font-size:12.5px;padding:2px 18px 2px 4px;width:auto;flex:1;">
+            <option value="">— Select —</option>
+            <option>Cash</option>
+            <option>E-Transfer</option>
+            <option>Credit Card</option>
+            <option>Debit Card</option>
+            <option>Insurance Direct Billing</option>
+            <option>Cheque</option>
+          </select>
+        </div>
+        <div class="frow">
+          <span class="flabel">Insurance Plan</span>
+          <input type="text" id="insurancePlan" class="finput" placeholder="e.g. Sun Life, Blue Cross"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">Policy / ID&nbsp;#</span>
+          <input type="text" id="policyNum" class="finput" placeholder="Policy or ID number"/>
+        </div>
+        <div class="frow">
+          <span class="flabel">Referring MD</span>
+          <input type="text" id="referringMD" class="finput" placeholder="Doctor name (if applicable)"/>
+        </div>
+      </div>
+
+      <div class="pay-divider"></div>
+
+      <!-- Totals -->
+      <div class="pay-col" style="display:flex;flex-direction:column;justify-content:center;">
+        <table class="totals-table">
+          <tr>
+            <td style="color:var(--teal-dk);font-size:12px;">Total (incl. HST)</td>
+            <td>$<span id="totalVal">0.00</span></td>
+          </tr>
+          <tr>
+            <td>Subtotal (before HST)</td>
+            <td>$<span id="subtotalVal">0.00</span></td>
+          </tr>
+          <tr>
+            <td>HST included (13/113)</td>
+            <td>$<span id="hstVal">0.00</span></td>
+          </tr>
+          <tr>
+            <td>Amount Paid</td>
+            <td>
+              $<input type="number" id="amountPaid" class="amt-paid-input"
+                      placeholder="0.00" min="0" step="0.01"
+                      oninput="recalc()"/>
+            </td>
+          </tr>
+          <tr class="total-row">
+            <td>Balance Due</td>
+            <td>$<span id="balanceDue">0.00</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- DECLARATION -->
+    <div class="declaration">
+      <div class="decl-title">Declaration &amp; Signature</div>
+      <p class="decl-text">I confirm that the massage therapy services described above were provided by a Registered Massage Therapist (RMT) licensed with the College of Massage Therapists of Ontario (CMTO).</p>
+
+      <div class="sig-grid" style="grid-template-columns:1fr 180px;gap:20px;">
+
+        <!-- RMT Signature -->
+        <div class="sig-col">
+          <span class="sig-lbl">RMT Signature</span>
+          <div class="sp-outer" id="rmtSigWrap">
+            <canvas id="rmtSigCanvas"></canvas>
+            <div class="sp-ghost">RMT signs here…</div>
+          </div>
+          <div class="sp-foot">
+            <span class="sp-status" id="rmtSigStatus"></span>
+            <button class="sp-clear" onclick="clearSig('rmt')">↺ Clear</button>
+          </div>
+          <img id="rmtSigSnap" class="sp-snap" alt="RMT Signature"/>
+        </div>
+
+        <div class="sig-divider-v"></div>
+
+        <!-- Date -->
+        <div class="sig-col" style="justify-content:flex-end;align-self:stretch;display:flex;flex-direction:column;padding:0;">
+          <span class="sig-lbl">Date</span>
+          <input type="date" id="signDate" class="finput" style="margin-bottom:24px"/>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <!-- Success banner -->
+    <div class="success-banner" id="successBanner">
+      <strong>✓ Invoice submitted successfully!</strong>
+      ErinGlenWellness has received this invoice. A PDF copy has been saved to Google Drive and emailed to eringlenrmt@gmail.com. A local copy has also been downloaded to this device.
+    </div>
+
+  </div><!-- /doc-body -->
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    This receipt is for insurance reimbursement purposes. Please retain for your records.&nbsp;&nbsp;·&nbsp;&nbsp;ErinGlenWellness&nbsp;&nbsp;·&nbsp;&nbsp;17624999 Canada Inc&nbsp;&nbsp;·&nbsp;&nbsp;112 Henshaw Dr, Erin, NOB 1T0
+  </div>
+
+</div><!-- /doc -->
+
+<!-- Toast -->
+<div id="toast"></div>
+<!-- Progress -->
+<div id="prog">
+  <div class="prog-card">
+    <div class="prog-spinner"></div>
+    <h4 id="progTitle">Working…</h4>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-msg" id="progMsg">Please wait</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     SCRIPT
+═════════════════════════════════════════════════════════ -->
+<script>
+/* ── ⚙ CONFIG ── */
+// IMPORTANT: Change '/exec' to '/usercurrentuser' to enable CORS
+// To deploy:
+// 1. Go to https://script.google.com
+// 2. Create new project, paste Invoice_GAS_Script.gs code
+// 3. Deploy → Web app → Execute as: You, Access: Anyone
+// 4. Copy deployment URL with /usercurrentuser endpoint
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwRQmNS7PYbLw2z2os_XNGI91_m7NPCfyMUZfrjIhfWtrDvPKWl85gQxCAB-uhXHJsy/exec';
+
+/* ════════════════════
+   RATE CARD
+════════════════════ */
+const RATE_CARD = [
+  { label:'— Select service —',       type:'',               mins:'',  price:0 },
+  { label:'Swedish / Deep Tissue – 30 min', type:'Swedish & Deep Tissue', mins:'30', price:70  },
+  { label:'Swedish / Deep Tissue – 45 min', type:'Swedish & Deep Tissue', mins:'45', price:90  },
+  { label:'Swedish / Deep Tissue – 60 min', type:'Swedish & Deep Tissue', mins:'60', price:108 },
+  { label:'Swedish / Deep Tissue – 90 min', type:'Swedish & Deep Tissue', mins:'90', price:150 },
+  { label:'Hot Stone Therapy – 60 min',     type:'Hot Stone Therapy',     mins:'60', price:138 },
+  { label:'Hot Stone Therapy – 90 min',     type:'Hot Stone Therapy',     mins:'90', price:195 },
+  { label:'Cupping Therapy – 60 min',       type:'Cupping Therapy',       mins:'60', price:128 },
+  { label:'Cupping Therapy – 90 min',       type:'Cupping Therapy',       mins:'90', price:180 },
+  { label:'Custom / Other',                 type:'Custom',                mins:'',   price:0,  custom:true },
+];
+
+/* ════════════════════
+   TOAST & PROGRESS
+════════════════════ */
+function showToast(msg,type='info',dur=4500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='show '+type;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),dur);
+}
+function progShow(t){ document.getElementById('progTitle').textContent=t; progSet(0,'Please wait…'); document.getElementById('prog').classList.add('active'); }
+function progSet(p,m){ document.getElementById('progFill').style.width=p+'%'; if(m)document.getElementById('progMsg').textContent=m; }
+function progHide(){ document.getElementById('prog').classList.remove('active'); }
+
+/* ════════════════════
+   TREATMENT ROWS
+════════════════════ */
+let rowCount = 0;
+
+function buildRowOptions(){
+  return RATE_CARD.map((r,i)=>`<option value="${i}">${r.label}</option>`).join('');
+}
+
+function addTreatmentRow(svcIdx=0, customSvc='', customMins='', customPrice=''){
+  rowCount++;
+  const id = rowCount;
+  const r  = RATE_CARD[svcIdx];
+  const isCustom = r && r.custom;
+
+  const tr = document.createElement('tr');
+  tr.id = 'row-'+id;
+  tr.innerHTML = `
+    <td class="col-svc">
+      <select class="t-select" id="svc-${id}" onchange="onSvcChange(${id})">
+        ${buildRowOptions()}
+      </select>
+      <input type="text" class="t-input" id="svc-custom-${id}"
+             placeholder="Describe service"
+             style="display:${isCustom?'block':'none'};margin-top:4px"
+             oninput="updateRowAmt(${id})"
+             value="${customSvc}"/>
+    </td>
+    <td class="col-dur">
+      <input type="text" class="t-input right" id="dur-${id}"
+             placeholder="—"
+             value="${r && !r.custom ? r.mins : customMins}"
+             style="text-align:center"
+             ${(!isCustom && svcIdx!==0) ? 'readonly':''} oninput="updateRowAmt(${id})"/>
+    </td>
+    <td class="col-price">
+      <input type="number" class="t-input right" id="price-${id}"
+             placeholder="0.00" min="0" step="0.01"
+             value="${(r && !r.custom && svcIdx!==0) ? r.price : (customPrice||'')}"
+             ${(!isCustom && svcIdx!==0) ? 'readonly':''} oninput="updateRowAmt(${id})"/>
+    </td>
+    <td class="col-amt">
+      <input type="text" class="t-input right" id="amt-${id}"
+             readonly placeholder="0.00"
+             value="${(r && !r.custom && svcIdx!==0) ? r.price.toFixed(2) : ''}"/>
+    </td>
+    <td class="col-del">
+      <button class="del-btn" onclick="deleteRow(${id})" title="Remove row">✕</button>
+    </td>`;
+
+  document.getElementById('treatmentBody').appendChild(tr);
+  document.getElementById('svc-'+id).value = svcIdx;
+  recalc();
+}
+
+function onSvcChange(id){
+  const idx   = parseInt(document.getElementById('svc-'+id).value);
+  const r     = RATE_CARD[idx];
+  const durEl = document.getElementById('dur-'+id);
+  const priceEl=document.getElementById('price-'+id);
+  const customEl=document.getElementById('svc-custom-'+id);
+
+  if(!r || idx===0){
+    durEl.value=''; durEl.removeAttribute('readonly');
+    priceEl.value=''; priceEl.removeAttribute('readonly');
+    customEl.style.display='none';
+  } else if(r.custom){
+    durEl.value=''; durEl.removeAttribute('readonly');
+    priceEl.value=''; priceEl.removeAttribute('readonly');
+    customEl.style.display='block';
+  } else {
+    durEl.value=r.mins; durEl.setAttribute('readonly','');
+    priceEl.value=r.price; priceEl.setAttribute('readonly','');
+    customEl.style.display='none';
+  }
+  updateRowAmt(id);
+}
+
+function updateRowAmt(id){
+  const price=parseFloat(document.getElementById('price-'+id).value)||0;
+  document.getElementById('amt-'+id).value=price>0?price.toFixed(2):'';
+  recalc();
+}
+
+function deleteRow(id){
+  const tr=document.getElementById('row-'+id);
+  if(tr){ tr.remove(); recalc(); }
+}
+
+/* ════════════════════
+   CALCULATIONS
+════════════════════ */
+function recalc(){
+  // Prices listed are already HST-inclusive.
+  // Back-calculate: subtotal = total / 1.13,  HST = total × (13/113)
+  let total = 0;
+  document.querySelectorAll('[id^="amt-"]').forEach(el=>{
+    total += parseFloat(el.value) || 0;
+  });
+  const subtotal = total / 1.13;
+  const hst      = total - subtotal;          // = total × (13/113)
+  const paid     = parseFloat(document.getElementById('amountPaid').value) || 0;
+  const balance  = total - paid;
+
+  document.getElementById('totalVal').textContent    = total.toFixed(2);
+  document.getElementById('subtotalVal').textContent = subtotal.toFixed(2);
+  document.getElementById('hstVal').textContent      = hst.toFixed(2);
+  document.getElementById('balanceDue').textContent  = balance.toFixed(2);
+}
+
+/* ════════════════════
+   SIGNATURE PADS
+════════════════════ */
+const pads = {};
+
+function makePad(key, canvasId, wrapId, statusId, snapId){
+  const canvas=document.getElementById(canvasId);
+  const wrap=document.getElementById(wrapId);
+  const status=document.getElementById(statusId);
+  const snap=document.getElementById(snapId);
+  const ctx=canvas.getContext('2d');
+  let drawing=false, lx=0, ly=0, hasSig=false;
+
+  function resize(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=canvas.getBoundingClientRect();
+    const prev=hasSig?canvas.toDataURL():null;
+    canvas.width=Math.round(rect.width*dpr);
+    canvas.height=Math.round(70*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    applyStyle();
+    if(prev){const i=new Image();i.onload=()=>ctx.drawImage(i,0,0,rect.width,70);i.src=prev;}
+  }
+  function applyStyle(){ ctx.strokeStyle='#111'; ctx.lineWidth=1.8; ctx.lineCap='round'; ctx.lineJoin='round'; }
+  function getPos(e){ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; }
+  function start(e){ e.preventDefault(); drawing=true; const p=getPos(e);[lx,ly]=[p.x,p.y]; ctx.beginPath();ctx.arc(p.x,p.y,.6,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();applyStyle();hasSig=true;wrap.classList.add('has-sig','active');wrap.classList.remove('err'); }
+  function draw(e){ if(!drawing)return;e.preventDefault();const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();[lx,ly]=[p.x,p.y]; }
+  function stop(){ if(!drawing)return;drawing=false;capture(); }
+  function capture(){ if(hasSig){snap.src=canvas.toDataURL('image/png');status.innerHTML='✓ Captured';} }
+
+  canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',draw);canvas.addEventListener('mouseup',stop);canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',draw,{passive:false});canvas.addEventListener('touchend',stop);
+  window.addEventListener('load',resize);
+  window.addEventListener('resize',()=>{clearTimeout(canvas._rt);canvas._rt=setTimeout(resize,120);});
+  window.addEventListener('beforeprint',capture);
+  if(window.matchMedia){window.matchMedia('print').addEventListener('change',e=>{if(e.matches)capture();});}
+
+  pads[key]={
+    capture,
+    get hasSig(){return hasSig;},
+    clear(){
+      const r=canvas.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);
+      hasSig=false;drawing=false;wrap.classList.remove('has-sig','active','err');
+      snap.src='';status.textContent='';
+    }
+  };
+}
+
+makePad('rmt','rmtSigCanvas','rmtSigWrap','rmtSigStatus','rmtSigSnap');
+
+function clearSig(k){ pads[k].clear(); }
+
+/* ════════════════════
+   AUTO-FILL
+════════════════════ */
+window.addEventListener('load',()=>{
+  const t=new Date(),pad=n=>String(n).padStart(2,'0');
+  const today=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+  document.getElementById('invoiceDate').value=today;
+  document.getElementById('signDate').value=today;
+  // Auto invoice number: INV-YYYYMMDD-001
+  document.getElementById('invoiceNum').value=`INV-${today.replace(/-/g,'')}-001`;
+  // Start with one empty treatment row
+  addTreatmentRow();
+});
+
+/* ════════════════════
+   VALIDATION
+════════════════════ */
+function validate(){
+  const name=document.getElementById('patientName');
+  const date=document.getElementById('invoiceDate');
+  [name,date].forEach(el=>el.classList.remove('err'));
+  document.getElementById('rmtSigWrap').classList.remove('err');
+
+  if(!name.value.trim()){ name.classList.add('err'); showToast('⚠ Please enter the patient name','error'); name.focus(); return false; }
+  if(!date.value){ date.classList.add('err'); showToast('⚠ Please enter the invoice date','error'); date.focus(); return false; }
+  if(!pads.rmt.hasSig){ document.getElementById('rmtSigWrap').classList.add('err'); showToast('⚠ RMT signature required','error'); return false; }
+  return true;
+}
+
+/* ════════════════════
+   FILE NAME
+════════════════════ */
+function buildFileName(){
+  const raw=document.getElementById('patientName').value.trim();
+  const date=document.getElementById('invoiceDate').value.replace(/-/g,'');
+  const inv=document.getElementById('invoiceNum').value.trim().replace(/[^a-zA-Z0-9\-]/g,'');
+  const safe=raw.replace(/[^a-zA-Z0-9 '\-]/g,'').trim().replace(/\s+/g,'_')||'Client';
+  return `Invoice_${safe}_${inv||date}.pdf`;
+}
+
+/* ════════════════════
+   BUILD SUMMARY TEXT
+   (used in email body)
+════════════════════ */
+function buildSummary(){
+  const lines=[];
+  lines.push('PATIENT: '+document.getElementById('patientName').value.trim());
+  lines.push('DATE: '+document.getElementById('invoiceDate').value);
+  lines.push('INVOICE #: '+document.getElementById('invoiceNum').value.trim());
+  lines.push('RMT: '+document.getElementById('rmtName').value.trim());
+  lines.push('RMT REG #: '+document.getElementById('rmtReg').value.trim());
+  lines.push('---');
+  lines.push('TREATMENTS:');
+  document.querySelectorAll('#treatmentBody tr').forEach(tr=>{
+    const id=tr.id.replace('row-','');
+    const svcSel=document.getElementById('svc-'+id);
+    const customSvc=document.getElementById('svc-custom-'+id);
+    const svcName=svcSel&&svcSel.selectedIndex>0
+      ? (RATE_CARD[svcSel.value].custom?customSvc.value:svcSel.options[svcSel.selectedIndex].text)
+      : '';
+    const dur=document.getElementById('dur-'+id)||{value:''};
+    const amt=document.getElementById('amt-'+id)||{value:''};
+    if(svcName) lines.push(`  • ${svcName} | ${dur.value} min | $${amt.value}`);
+  });
+  lines.push('---');
+  lines.push('Total (incl. HST): $'+document.getElementById('totalVal').textContent);
+  lines.push('Subtotal (before HST): $'+document.getElementById('subtotalVal').textContent);
+  lines.push('HST included (13/113): $'+document.getElementById('hstVal').textContent);
+  lines.push('Amount Paid: $'+(document.getElementById('amountPaid').value||'0.00'));
+  lines.push('Balance Due: $'+document.getElementById('balanceDue').textContent);
+  lines.push('Payment Method: '+document.getElementById('payMethod').value);
+  lines.push('Insurance Plan: '+document.getElementById('insurancePlan').value);
+  return lines.join('\n');
+}
+
+/* ════════════════════
+   HIDE / SHOW for PDF
+════════════════════ */
+function hideForPDF(){
+  pads.rmt.capture();
+  // hide canvas pads; show snapshots
+  document.getElementById('rmtSigWrap').style.display='none';
+  document.querySelector('#rmtSigWrap + .sp-foot').style.display='none';
+  document.getElementById('rmtSigSnap').style.display='block';
+
+  // hide toolbar & setup note
+  document.querySelector('.toolbar').style.display='none';
+  const sn=document.getElementById('setupNote'); if(sn)sn.style.display='none';
+  document.getElementById('successBanner').style.display='none';
+  // hide delete buttons & add row
+  document.querySelectorAll('.del-btn,.add-row-btn').forEach(el=>el.style.display='none');
+}
+function showAfterPDF(successWasShown){
+  document.getElementById('rmtSigWrap').style.display='';
+  document.querySelector('#rmtSigWrap + .sp-foot').style.display='';
+  document.getElementById('rmtSigSnap').style.display='';
+
+  document.querySelector('.toolbar').style.display='';
+  const sn=document.getElementById('setupNote'); if(sn)sn.style.display='';
+  if(successWasShown)document.getElementById('successBanner').style.display='block';
+  document.querySelectorAll('.del-btn,.add-row-btn').forEach(el=>el.style.display='');
+}
+
+/* ════════════════════
+   GENERATE PDF
+════════════════════ */
+async function generatePDF(){
+  const successShown=document.getElementById('successBanner').classList.contains('show');
+  hideForPDF();
+  
+  // Store original placeholder attributes to restore later
+  const placeholderMap = new Map();
+  document.querySelectorAll('input[placeholder]').forEach(el => {
+    placeholderMap.set(el, el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', '');
+  });
+  
+  progSet(25,'Rendering…');
+  await new Promise(r=>setTimeout(r,130));
+
+  const el=document.getElementById('invoiceDoc');
+  const cvs=await html2canvas(el,{scale:2,useCORS:true,logging:false,backgroundColor:'#fff',allowTaint:true});
+
+  progSet(65,'Building PDF…');
+  await new Promise(r=>setTimeout(r,60));
+
+  const {jsPDF}=window.jspdf;
+  const img=cvs.toDataURL('image/jpeg',.93);
+  const ratio=cvs.height/cvs.width;
+  const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+  const aW=pdf.internal.pageSize.getWidth();
+  const aH=pdf.internal.pageSize.getHeight();
+  const fullH=aW*ratio;
+  let posY=0,page=0;
+  while(posY<fullH){ if(page>0)pdf.addPage(); pdf.addImage(img,'JPEG',0,-posY,aW,fullH,undefined,'FAST'); posY+=aH; page++; }
+
+  progSet(90,'Finishing…');
+  await new Promise(r=>setTimeout(r,60));
+  
+  // Restore placeholders
+  placeholderMap.forEach((placeholder, el) => {
+    el.setAttribute('placeholder', placeholder);
+  });
+  
+  showAfterPDF(successShown);
+  return pdf;
+}
+
+/* ════════════════════
+   SAVE PDF LOCALLY
+════════════════════ */
+async function savePDF(){
+  if(!validate())return;
+  progShow('Generating PDF…');
+  try{
+    const pdf=await generatePDF();
+    progSet(100,'Done!'); pdf.save(buildFileName());
+    await new Promise(r=>setTimeout(r,400));
+    progHide();
+    showToast('✓ PDF saved to your downloads folder','success');
+  }catch(err){
+    progHide(); console.error(err);
+    showToast('⚠ PDF failed — try Ctrl+P to print instead','error',6000);
+  }
+}
+
+/* ════════════════════
+   SUBMIT
+════════════════════ */
+async function submitForm(){
+  if(!validate())return;
+
+  if(GAS_ENDPOINT==='YOUR_GOOGLE_APPS_SCRIPT_URL'){
+    showToast('⚠ Submit endpoint not configured — saving PDF locally instead','error',6000);
+    await savePDF(); return;
+  }
+
+  progShow('Submitting invoice…');
+  try{
+    progSet(10,'Generating PDF…');
+    const pdf=await generatePDF();
+    const b64=pdf.output('datauristring').split(',')[1];
+
+    progSet(55,'Sending…');
+    const payload={
+      patientName   : document.getElementById('patientName').value.trim(),
+      invoiceNum    : document.getElementById('invoiceNum').value.trim(),
+      invoiceDate   : document.getElementById('invoiceDate').value,
+      rmtName       : document.getElementById('rmtName').value.trim(),
+      total         : document.getElementById('totalVal').textContent,
+      subtotal      : document.getElementById('subtotalVal').textContent,
+      hst           : document.getElementById('hstVal').textContent,
+      amountPaid    : document.getElementById('amountPaid').value||'0.00',
+      balanceDue    : document.getElementById('balanceDue').textContent,
+      payMethod     : document.getElementById('payMethod').value,
+      summary       : buildSummary(),
+      fileName      : buildFileName(),
+      pdfBase64     : b64,
+    };
+
+    const response = await fetch(GAS_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify(payload),
+    });
+
+    if(!response.ok){
+      const errText = await response.text();
+      console.error('Server error:',response.status,errText);
+      throw new Error(`Server returned ${response.status}`);
+    }
+
+    const result = await response.json().catch(()=>({}));
+    console.log('✓ Server response:',result);
+
+    progSet(95,'Almost done…'); await new Promise(r=>setTimeout(r,300));
+    progSet(100,'Submitted!'); progHide();
+    pdf.save(buildFileName());
+
+    document.getElementById('successBanner').classList.add('show');
+    document.getElementById('successBanner').scrollIntoView({behavior:'smooth',block:'nearest'});
+    showToast('✓ Invoice submitted to ErinGlenWellness!','success',7000);
+
+  }catch(err){
+    progHide(); console.error(err);
+    showToast('⚠ Could not reach server — PDF saved locally','error',6000);
+    await savePDF();
+  }
+}
+
+/* ════════════════════
+   CLEAR ALL
+════════════════════ */
+function clearAll(){
+  if(!confirm('Clear all fields and signatures? This cannot be undone.'))return;
+  ['patientName','patientAddr','patientCity','patientPhone',
+   'rmtName','rmtReg','invoiceTime','insurancePlan','policyNum','referringMD']
+    .forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('payMethod').selectedIndex=0;
+  document.getElementById('amountPaid').value='';
+  const t=new Date(),pad=n=>String(n).padStart(2,'0');
+  const today=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+  document.getElementById('invoiceDate').value=today;
+  document.getElementById('signDate').value=today;
+  document.getElementById('invoiceNum').value=`INV-${today.replace(/-/g,'')}-001`;
+  // clear treatment rows and add one fresh
+  document.getElementById('treatmentBody').innerHTML='';
+  rowCount=0;
+  addTreatmentRow();
+  // clear sigs
+  pads.rmt.clear();
+  document.getElementById('successBanner').classList.remove('show');
+  recalc();
+}
+</script>
+</body>
+</html>

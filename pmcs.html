@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Consent and Authorization for Electronic Claims Submission – Sun Life</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sun-yellow: #f5a800;
+  --sun-dk:     #1a1a1a;
+  --hdr-bg:     #1c1c1c;
+  --sec-bg:     #1c1c1c;
+  --sec-fg:     #ffffff;
+  --border:     #b0b0b0;
+  --light:      #e0e0e0;
+  --paper:      #ffffff;
+  --ink:        #111111;
+  --muted:      #555555;
+  --field-bg:   #fafafa;
+  --red:        #c0392b;
+  --blue:       #1a5276;
+  --serif:      'Source Serif 4', Georgia, serif;
+  --sans:       'Source Sans 3', 'Helvetica Neue', Arial, sans-serif;
+  --r:          2px;
+}
+
+body{
+  background:#e0e0e0;
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--ink);
+  padding:20px 12px 80px;
+  line-height:1.5;
+}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  max-width:860px; margin:0 auto 14px;
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+}
+.toolbar-note{ font-size:11.5px; color:#666; font-style:italic; margin-right:auto; }
+.tbtn{
+  font-family:var(--sans); font-size:11px; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  padding:9px 22px; border:none; border-radius:2px;
+  cursor:pointer; display:inline-flex; align-items:center;
+  gap:7px; transition:all .16s; white-space:nowrap;
+}
+.tbtn-pdf   { background:var(--sun-yellow); color:#1a1a1a; box-shadow:0 2px 10px rgba(245,168,0,.35); }
+.tbtn-pdf:hover  { background:#d4900a; }
+.tbtn-clear { background:transparent; color:#555; border:1.5px solid #aaa; }
+.tbtn-clear:hover{ border-color:#111; color:#111; }
+
+/* ── PAPER ── */
+.doc{
+  max-width:860px; margin:0 auto;
+  background:var(--paper);
+  box-shadow:0 4px 32px rgba(0,0,0,.18);
+}
+
+/* ── PAGE HEADER ── */
+.page-hdr{
+  padding:28px 36px 22px;
+  border-bottom:2px solid var(--sun-dk);
+  display:flex; justify-content:space-between; align-items:flex-start; gap:20px;
+}
+.page-hdr-title{
+  font-family:var(--serif); font-size:22px; font-weight:700;
+  color:var(--ink); line-height:1.25; max-width:580px;
+}
+.sunlife-logo{
+  flex-shrink:0;
+  display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+}
+.sunlife-logo .sl-sun{
+  width:52px; height:52px;
+}
+.sunlife-logo .sl-text{
+  font-family:var(--sans); font-size:13px; font-weight:700;
+  color:var(--sun-dk); letter-spacing:-.01em;
+}
+
+/* ── BODY ── */
+.doc-body{ padding:0 36px 36px; }
+
+/* ── IMPORTANT NOTE ── */
+.imp-note{ padding:18px 0 14px; }
+.imp-note .note-title{
+  font-family:var(--sans); font-size:13px; font-weight:700;
+  color:var(--ink); margin-bottom:8px;
+}
+.imp-note ul{ padding-left:18px; }
+.imp-note li{ font-size:12.5px; line-height:1.7; color:#333; margin-bottom:3px; }
+
+/* Definitions */
+.definitions{ padding:0 0 18px; }
+.definitions p{ font-size:12.5px; line-height:1.75; color:#333; margin-bottom:7px; }
+.definitions strong{ color:var(--ink); }
+
+/* ── SECTION HEADER ── */
+.sec-hdr{
+  background:var(--sec-bg); color:var(--sec-fg);
+  padding:9px 14px; display:flex; align-items:center;
+  gap:12px; margin-bottom:0;
+}
+.sec-num{
+  background:var(--sun-yellow); color:var(--ink);
+  font-weight:700; font-size:13px;
+  width:24px; height:24px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; border-radius:1px;
+}
+.sec-title{
+  font-family:var(--sans); font-size:14px; font-weight:700;
+  color:#fff; letter-spacing:.01em;
+}
+.sec-title em{ font-style:normal; font-weight:400; font-size:12px; color:rgba(255,255,255,.72); }
+
+/* ── FORM GRID (mimics the bordered table in PDF) ── */
+.form-grid{
+  border:1px solid var(--border);
+  border-top:none;
+  margin-bottom:22px;
+}
+.grid-row{
+  display:grid;
+  border-bottom:1px solid var(--border);
+}
+.grid-row:last-child{ border-bottom:none; }
+
+/* column span helpers */
+.col-1{ grid-template-columns:1fr; }
+.col-2{ grid-template-columns:1fr 1fr; }
+.col-2-1{ grid-template-columns:2fr 1fr; }
+.col-3-1-1{ grid-template-columns:3fr 1.2fr 1.2fr; }
+.col-1-1-1{ grid-template-columns:1fr 1fr 1fr; }
+.col-3{ grid-template-columns:1fr 1fr 1fr; }
+.col-2-1-1{ grid-template-columns:2fr 1fr 1fr; }
+
+.grid-cell{
+  padding:7px 10px;
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; gap:2px;
+  min-height:46px;
+}
+.grid-cell:last-child{ border-right:none; }
+
+/* field label inside cell */
+.cell-label{
+  font-size:10px; font-weight:600; color:var(--muted);
+  letter-spacing:.04em; line-height:1.2;
+  pointer-events:none;
+}
+
+/* fill input */
+.fill{
+  border:none; background:transparent;
+  font-family:var(--serif); font-size:13px; color:var(--ink);
+  padding:2px 2px; outline:none; width:100%; flex:1;
+  min-width:0;
+  transition:background .13s;
+}
+.fill:focus{ background:rgba(245,168,0,.10); }
+.fill::placeholder{ font-size:11px; color:#ccc; }
+.fill.err{ background:rgba(192,57,43,.08); }
+
+/* ── CONSENT TEXT SECTION ── */
+.consent-body{
+  border:1px solid var(--border); border-top:none;
+  padding:16px 18px 18px; margin-bottom:22px;
+  font-size:12.5px; line-height:1.75; color:#333;
+}
+.consent-body p{ margin-bottom:10px; }
+.consent-body p:last-child{ margin-bottom:0; }
+.consent-body .cb-head{
+  font-weight:700; color:var(--ink); margin-bottom:6px; font-size:13px;
+}
+.consent-body ul{ padding-left:18px; margin-bottom:10px; }
+.consent-body li{ margin-bottom:3px; line-height:1.7; }
+
+/* ── SIGNATURE BLOCK ── */
+.sig-section{
+  border:1px solid var(--border); border-top:none;
+  padding:16px 18px 18px; margin-bottom:22px;
+}
+.sig-row{
+  display:grid; grid-template-columns:1fr 220px;
+  gap:24px; align-items:end; margin-top:14px;
+}
+.sig-lbl{
+  font-size:10px; font-weight:600; color:var(--muted);
+  letter-spacing:.04em; display:block; margin-bottom:5px;
+}
+/* canvas sig pad */
+.sp-outer{
+  position:relative; border:1.5px solid var(--border);
+  border-radius:var(--r); background:#fdfdfd;
+  overflow:hidden; cursor:crosshair;
+  transition:border-color .16s;
+}
+.sp-outer.active{ border-color:var(--sun-yellow); box-shadow:0 0 0 2px rgba(245,168,0,.2); }
+.sp-outer.err{ border-color:var(--red); }
+.sp-outer canvas{ display:block; width:100%; height:70px; touch-action:none; }
+.sp-ghost{
+  position:absolute; inset:0; pointer-events:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-style:italic; color:#ccc;
+  transition:opacity .18s;
+}
+.sp-outer.has-sig .sp-ghost{ opacity:0; }
+.sp-snap{ display:none; width:100%; height:70px; object-fit:contain; background:#fdfdfd; border:1.5px solid var(--border); }
+.sp-foot{
+  display:flex; align-items:center;
+  justify-content:space-between; margin-top:4px;
+}
+.sp-status{ font-size:10px; font-weight:700; color:#1a7a3a; }
+.sp-clear{
+  font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 11px; border:1.5px solid var(--light); border-radius:2px;
+  background:transparent; color:var(--muted); cursor:pointer; transition:all .12s;
+}
+.sp-clear:hover{ border-color:#111; color:#111; }
+
+/* sig x mark */
+.sig-x{
+  display:flex; align-items:flex-end; gap:8px;
+}
+.sig-x-mark{
+  font-size:22px; font-weight:700; color:var(--ink);
+  line-height:1; padding-bottom:4px; flex-shrink:0;
+}
+.sig-col{ display:flex; flex-direction:column; gap:4px; flex:1; }
+
+/* print name + date row */
+.sig-bottom-row{
+  display:grid; grid-template-columns:1fr 180px;
+  gap:24px; margin-top:14px; align-items:end;
+}
+.fill-underline{
+  border:none; border-bottom:1.5px solid var(--border);
+  background:transparent; font-family:var(--serif); font-size:13px;
+  color:var(--ink); padding:3px 2px; outline:none; width:100%;
+  transition:border-color .13s, background .13s;
+}
+.fill-underline:focus{ border-bottom-color:var(--sun-yellow); background:rgba(245,168,0,.06); }
+.fill-underline::placeholder{ font-size:11px; color:#ccc; }
+
+/* ── PRIVACY SECTION ── */
+.privacy-body{
+  border:1px solid var(--border); border-top:none;
+  padding:14px 18px 16px; margin-bottom:10px;
+  font-size:12px; line-height:1.75; color:#444;
+}
+.privacy-body p{ margin-bottom:8px; }
+.privacy-body p:last-child{ margin-bottom:0; }
+.privacy-body a{ color:var(--blue); }
+
+/* ── PAGE BREAK HINT ── */
+.page-break-line{
+  border:none; border-top:2px dashed #ccc;
+  margin:28px 0 0; position:relative;
+}
+.page-break-line::after{
+  content:'— Page break —';
+  position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+  background:#e0e0e0; padding:0 12px; font-size:10px; color:#aaa; letter-spacing:.06em;
+}
+
+/* ── PAGE NUMBER / REF ── */
+.doc-footer-note{
+  text-align:right; font-size:10px; color:var(--muted);
+  padding:6px 36px 10px; border-top:1px solid var(--light);
+}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed; bottom:24px; right:24px; z-index:9999;
+  font-family:var(--sans); font-size:13px; font-weight:600;
+  padding:12px 22px; border-radius:2px;
+  box-shadow:0 6px 28px rgba(0,0,0,.22);
+  opacity:0; pointer-events:none;
+  transition:opacity .24s, transform .24s; transform:translateY(10px);
+}
+#toast.show{ opacity:1; transform:translateY(0); }
+#toast.success{ background:#1a7a3a; color:#fff; }
+#toast.error  { background:var(--red); color:#fff; }
+#toast.info   { background:#1c2b3a; color:#fff; }
+
+/* ── PROGRESS ── */
+#prog{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(3px);
+  z-index:99999; align-items:center; justify-content:center;
+}
+#prog.active{ display:flex; }
+.prog-card{
+  background:#fff; border-radius:4px;
+  padding:30px 46px; text-align:center; min-width:280px;
+  box-shadow:0 16px 48px rgba(0,0,0,.24);
+}
+.prog-spinner{
+  width:30px; height:30px;
+  border:3px solid #e8e8e8; border-top-color:var(--sun-yellow);
+  border-radius:50%; animation:spin .8s linear infinite;
+  margin:0 auto 12px;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.prog-card h4{ font-size:15px; color:#111; margin:0 0 12px; font-family:var(--serif); }
+.prog-track{ width:100%; height:4px; background:#e8e8e8; border-radius:2px; overflow:hidden; }
+.prog-fill{ height:100%; background:var(--sun-yellow); border-radius:2px; width:0%; transition:width .28s; }
+.prog-msg{ font-size:11.5px; color:var(--muted); margin-top:8px; }
+
+/* ── PRINT ── */
+@media print{
+  body{ background:#fff; padding:0; }
+  .toolbar,#toast,#prog{ display:none !important; }
+  .doc{ box-shadow:none; }
+  .sp-outer,.sp-foot{ display:none !important; }
+  .sp-snap{ display:block !important; }
+  .page-break-line{ page-break-before:always; border:none; }
+  .page-break-line::after{ display:none; }
+}
+
+@media(max-width:620px){
+  .doc-body{ padding:0 16px 24px; }
+  .page-hdr{ padding:20px 16px 16px; flex-direction:column; }
+  .col-2,.col-2-1,.col-3-1-1,.col-3,.col-2-1-1,.col-1-1-1{ grid-template-columns:1fr; }
+  .sig-row{ grid-template-columns:1fr; }
+  .sig-bottom-row{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOOLBAR ── -->
+<div class="toolbar">
+  <span class="toolbar-note">Fill all fields · Sign in the signature boxes · Save PDF when complete</span>
+  <button class="tbtn tbtn-clear" onclick="clearAll()">↺ Clear</button>
+  <button class="tbtn tbtn-pdf"   onclick="savePDF()">⬇ Save PDF</button>
+</div>
+
+<!-- ══════════════════════════
+     DOCUMENT
+══════════════════════════ -->
+<div class="doc" id="formDoc">
+
+  <!-- HEADER -->
+  <div class="page-hdr">
+    <div class="page-hdr-title">Consent and Authorization for Electronic Claims Submission and Assignment of Benefits Form</div>
+    <div class="sunlife-logo">
+      <!-- Sun Life sun SVG -->
+      <svg class="sl-sun" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="18" fill="#f5a800"/>
+        <!-- rays -->
+        <g stroke="#f5a800" stroke-width="3.5" stroke-linecap="round">
+          <line x1="40" y1="4"  x2="40" y2="14"/>
+          <line x1="40" y1="66" x2="40" y2="76"/>
+          <line x1="4"  y1="40" x2="14" y2="40"/>
+          <line x1="66" y1="40" x2="76" y2="40"/>
+          <line x1="12.7" y1="12.7" x2="19.8" y2="19.8"/>
+          <line x1="60.2" y1="60.2" x2="67.3" y2="67.3"/>
+          <line x1="67.3" y1="12.7" x2="60.2" y2="19.8"/>
+          <line x1="19.8" y1="60.2" x2="12.7" y2="67.3"/>
+        </g>
+      </svg>
+      <span class="sl-text">Sun Life</span>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- IMPORTANT NOTE -->
+    <div class="imp-note">
+      <div class="note-title">Important Note:</div>
+      <ul>
+        <li>Plan Members must complete this form, even if your patient or customer is the Plan Member's dependent.</li>
+        <li>We refer to the Provider as "you" or "Provider".</li>
+        <li>You keep the completed form on file for verification purposes for the later of (i) 6 years following the last service date or (ii) such longer period as required by applicable law or the regulations and professional standards of your regulatory body, college or association.</li>
+      </ul>
+    </div>
+
+    <!-- DEFINITIONS -->
+    <div class="definitions">
+      <p><strong>Plan</strong> means a group benefits plan or an individual policy of insurance.</p>
+      <p><strong>Plan Member</strong> means for group plans, the eligible member (e.g. for an employer group plan, this is the employee) responsible for the group benefits coverage. For individual insurance policies, the Plan Member is the policyholder. Plan Members' dependents are eligible for coverage. Dependents are the Plan Member's spouse or children.</p>
+      <p><strong>Plan Sponsor</strong> is the policyholder of an insured or self-insured group benefits plan. For example, for Plans covering employees, the Plan Sponsor is the Plan Member's employer.</p>
+      <p><strong>Provider</strong> refers to licensed or qualified paramedical practitioner, ophthalmologist or optometrist providing medical services or goods. A Provider may be:</p>
+      <ul style="padding-left:18px;margin-bottom:7px;">
+        <li style="font-size:12.5px;line-height:1.7;">an organization, such as a facility or clinic, submitting claims on behalf of one or more healthcare practitioners; or</li>
+        <li style="font-size:12.5px;line-height:1.7;">an individual responsible for their own billing.</li>
+      </ul>
+      <p>In the Sun Life Electronic Claims Submission Agreement, we refer to the above as a Healthcare Practice and Independent Healthcare Provider respectively.</p>
+    </div>
+
+    <!-- ── SECTION 1: Plan Member Information ── -->
+    <div class="sec-hdr">
+      <div class="sec-num">1</div>
+      <div class="sec-title">Plan Member information</div>
+    </div>
+    <div class="form-grid">
+      <div class="grid-row col-2">
+        <div class="grid-cell">
+          <span class="cell-label">First name</span>
+          <input type="text" class="fill" id="pm_fname" placeholder="First name"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Last name</span>
+          <input type="text" class="fill" id="pm_lname" placeholder="Last name"/>
+        </div>
+      </div>
+      <div class="grid-row col-2-1">
+        <div class="grid-cell">
+          <span class="cell-label">Address (street number and name)</span>
+          <input type="text" class="fill" id="pm_addr" placeholder="Street address"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Apartment or suite</span>
+          <input type="text" class="fill" id="pm_apt" placeholder="Apt / Suite"/>
+        </div>
+      </div>
+      <div class="grid-row col-3-1-1">
+        <div class="grid-cell">
+          <span class="cell-label">City</span>
+          <input type="text" class="fill" id="pm_city" placeholder="City"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Province</span>
+          <input type="text" class="fill" id="pm_prov" placeholder="Province"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Postal code</span>
+          <input type="text" class="fill" id="pm_postal" placeholder="A1B 2C3"/>
+        </div>
+      </div>
+      <div class="grid-row col-2">
+        <div class="grid-cell">
+          <span class="cell-label">Phone number</span>
+          <input type="tel" class="fill" id="pm_phone" placeholder="(000) 000-0000"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Email address</span>
+          <input type="email" class="fill" id="pm_email" placeholder="email@example.com"/>
+        </div>
+      </div>
+      <div class="grid-row col-2">
+        <div class="grid-cell">
+          <span class="cell-label">Contract number</span>
+          <input type="text" class="fill" id="pm_contract" placeholder="Contract number"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Member ID</span>
+          <input type="text" class="fill" id="pm_memberid" placeholder="Member ID"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: Patient / Customer Information ── -->
+    <div class="sec-hdr">
+      <div class="sec-num">2</div>
+      <div class="sec-title">Patient or Customer information <em>(Complete this if the patient or customer is not the Plan Member)</em></div>
+    </div>
+    <div class="form-grid">
+      <div class="grid-row col-2">
+        <div class="grid-cell">
+          <span class="cell-label">First name</span>
+          <input type="text" class="fill" id="pat_fname" placeholder="First name"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Last name</span>
+          <input type="text" class="fill" id="pat_lname" placeholder="Last name"/>
+        </div>
+      </div>
+      <div class="grid-row col-2-1">
+        <div class="grid-cell">
+          <span class="cell-label">Address (street number and name)</span>
+          <input type="text" class="fill" id="pat_addr" placeholder="Street address"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Apartment or suite</span>
+          <input type="text" class="fill" id="pat_apt" placeholder="Apt / Suite"/>
+        </div>
+      </div>
+      <div class="grid-row col-3-1-1">
+        <div class="grid-cell">
+          <span class="cell-label">City</span>
+          <input type="text" class="fill" id="pat_city" placeholder="City"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Province</span>
+          <input type="text" class="fill" id="pat_prov" placeholder="Province"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Postal code</span>
+          <input type="text" class="fill" id="pat_postal" placeholder="A1B 2C3"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3: Provider / Facility Information ── -->
+    <div class="sec-hdr">
+      <div class="sec-num">3</div>
+      <div class="sec-title">Provider/facility information</div>
+    </div>
+    <div class="form-grid">
+      <div class="grid-row col-1">
+        <div class="grid-cell">
+          <span class="cell-label">Name</span>
+          <input type="text" class="fill" id="prov_name" placeholder="Provider or facility name"/>
+        </div>
+      </div>
+      <div class="grid-row col-2-1">
+        <div class="grid-cell">
+          <span class="cell-label">Address (street number and name)</span>
+          <input type="text" class="fill" id="prov_addr" placeholder="Street address"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Apartment or suite</span>
+          <input type="text" class="fill" id="prov_apt" placeholder="Apt / Suite"/>
+        </div>
+      </div>
+      <div class="grid-row col-3-1-1">
+        <div class="grid-cell">
+          <span class="cell-label">City</span>
+          <input type="text" class="fill" id="prov_city" placeholder="City"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Province</span>
+          <input type="text" class="fill" id="prov_prov" placeholder="Province"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Postal code</span>
+          <input type="text" class="fill" id="prov_postal" placeholder="A1B 2C3"/>
+        </div>
+      </div>
+      <div class="grid-row" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="grid-cell">
+          <span class="cell-label">Phone number</span>
+          <input type="tel" class="fill" id="prov_phone" placeholder="(000) 000-0000"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">Email address</span>
+          <input type="email" class="fill" id="prov_email" placeholder="email@example.com"/>
+        </div>
+        <div class="grid-cell">
+          <span class="cell-label">License Number</span>
+          <input type="text" class="fill" id="prov_license" placeholder="License number"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE BREAK (visual) ─── -->
+    <hr class="page-break-line"/>
+    <div style="height:32px;"></div>
+
+    <!-- ── SECTION 4: Consent and Authorization ── -->
+    <div class="sec-hdr">
+      <div class="sec-num">4</div>
+      <div class="sec-title">Consent and Authorization for Electronic Claims Submissions</div>
+    </div>
+    <div class="consent-body">
+      <p>I authorize Provider to:</p>
+      <ul>
+        <li>electronically submit claims (eClaims) for healthcare goods, supplies or services for me or my dependent(s) to Sun Life Assurance Company of Canada (Sun Life) on my behalf and on behalf of my dependents
+          <ul style="margin-top:4px;">
+            <li>for the purposes set out below (see <em>The Purposes</em>) and</li>
+            <li>to the relevant parties also set out below (see <em>Relevant Parties</em>).</li>
+          </ul>
+        </li>
+        <li>disclose information about the e-claim (including personal health information in the Provider's files) to Sun Life.</li>
+      </ul>
+      <p>For any eClaims made on behalf of my dependents and for the purposes set out in this form, I confirm that my dependents authorized me to consent to the disclosure of their personal information to Sun Life.</p>
+
+      <p class="cb-head">The Purposes</p>
+      <p>I consent and agree that Sun Life and its reinsurers may collect, use and disclose the eClaims information to:</p>
+      <ul>
+        <li>adjudicate, review and audit eClaims;</li>
+        <li>investigate any suspect claims involving potential fraud or plan abuse ("suspect claims"); and</li>
+        <li>underwrite and administer the Plan</li>
+      </ul>
+      <p>For suspect claims, I consent and agree that Sun Life and its reinsurers may also investigate claims to assess, detect and prevent potential fraud or plan abuse.</p>
+
+      <p class="cb-head">Relevant parties</p>
+      <p>I also consent and agree that Sun Life and its reinsurers may collect, use and disclose the eClaims information with relevant parties. These parties include persons or organizations having relevant information and a need to know about the eClaim including:</p>
+      <ul>
+        <li>the Provider or other health practitioners;</li>
+        <li>clinics, facilities, hospitals or other institutions; and</li>
+        <li>other insurers.</li>
+      </ul>
+      <p>For suspect claims, I further consent and agree that Sun Life and its reinsurers may collect, use and disclose eClaims information with relevant parties that include:</p>
+      <ul>
+        <li>investigative agencies and the police</li>
+        <li>regulatory bodies or associations</li>
+        <li>government organizations</li>
+        <li>medical suppliers</li>
+        <li>other insurers</li>
+        <li>my Plan Sponsor.</li>
+      </ul>
+
+      <p class="cb-head">Overpayments</p>
+      <p>If there is an overpayment, I authorize:</p>
+      <ul>
+        <li>the recovery of the full amount of the overpayment from any amount payable to me under the Plan; and</li>
+        <li>Sun Life to collect, use and disclose information about the eClaims with collection agencies.</li>
+      </ul>
+
+      <p class="cb-head">General Information</p>
+      <p>I also understand that information pertaining to eClaims may be reviewed if the Plan is audited.</p>
+      <p>Any reference to Sun Life, reinsurers or the Plan Sponsor includes their agents and service providers.</p>
+      <p>A photocopy or electronic version of this authorization is as valid as the original, and remains in effect for the continued administration of the Plan.</p>
+    </div>
+
+    <!-- Signature block – Section 4 -->
+    <div class="sig-section">
+      <div class="sig-row">
+        <div>
+          <div class="sig-x">
+            <span class="sig-x-mark">X</span>
+            <div class="sig-col">
+              <span class="sig-lbl">Signature</span>
+              <div class="sp-outer" id="sig4Wrap">
+                <canvas id="sig4Canvas"></canvas>
+                <div class="sp-ghost">Sign here…</div>
+              </div>
+              <div class="sp-foot">
+                <span class="sp-status" id="sig4Status"></span>
+                <button class="sp-clear" onclick="clearPad('sig4')">↺ Clear</button>
+              </div>
+              <img id="sig4Snap" class="sp-snap" alt="Signature"/>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="sig-lbl">Date (dd-mm-yyyy)</span>
+          <input type="text" class="fill-underline" id="sig4Date" placeholder="DD-MM-YYYY"/>
+        </div>
+      </div>
+      <div class="sig-bottom-row">
+        <div>
+          <span class="sig-lbl">Print name</span>
+          <input type="text" class="fill-underline" id="sig4Print" placeholder="Print full name"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE BREAK ─── -->
+    <hr class="page-break-line"/>
+    <div style="height:32px;"></div>
+
+    <!-- ── SECTION 5: Assignment of Benefits ── -->
+    <div class="sec-hdr">
+      <div class="sec-num">5</div>
+      <div class="sec-title">Assignment of Benefits</div>
+    </div>
+    <div class="consent-body">
+      <p>I assign the benefits payable for my and/or my dependents' eClaims to the Provider.</p>
+      <p>I authorize Sun Life to issue payment directly to Provider.</p>
+      <p>I understand that:</p>
+      <ul>
+        <li>I'm responsible for payment to Provider should Sun Life decline this eClaim.</li>
+        <li>Sun Life is not required to accept this assignment.</li>
+        <li>Sun Life's payment, whether to Provider or me, will discharge Sun Life's obligation under the Plan.</li>
+      </ul>
+      <p>This Assignment will apply to all eligible eClaims Provider submits electronically on my behalf until I revoke it in writing with reasonable notice to Sun Life.</p>
+      <p>A photocopy or electronic version of this Assignment will be as valid as the original. This Assignment may remain in effect for the continued administration of the Plan.</p>
+    </div>
+
+    <!-- Signature block – Section 5 -->
+    <div class="sig-section">
+      <div class="sig-row">
+        <div>
+          <div class="sig-x">
+            <span class="sig-x-mark">X</span>
+            <div class="sig-col">
+              <span class="sig-lbl">Signature</span>
+              <div class="sp-outer" id="sig5Wrap">
+                <canvas id="sig5Canvas"></canvas>
+                <div class="sp-ghost">Sign here…</div>
+              </div>
+              <div class="sp-foot">
+                <span class="sp-status" id="sig5Status"></span>
+                <button class="sp-clear" onclick="clearPad('sig5')">↺ Clear</button>
+              </div>
+              <img id="sig5Snap" class="sp-snap" alt="Signature"/>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="sig-lbl">Date (dd-mm-yyyy)</span>
+          <input type="text" class="fill-underline" id="sig5Date" placeholder="DD-MM-YYYY"/>
+        </div>
+      </div>
+      <div class="sig-bottom-row">
+        <div>
+          <span class="sig-lbl">Print name</span>
+          <input type="text" class="fill-underline" id="sig5Print" placeholder="Print full name"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 6: Privacy ── -->
+    <div class="sec-hdr">
+      <div class="sec-num">6</div>
+      <div class="sec-title">Respecting your privacy</div>
+    </div>
+    <div class="privacy-body">
+      <p>Respecting your privacy is a priority for the Sun Life group of companies. We keep in confidence personal information about you and the products and services you have with us to provide you with investment, retirement and insurance products and services to help you meet your lifetime financial objectives. To meet these objectives, we collect, use and disclose your personal information for purposes that include: underwriting; administration; claims adjudication; protecting against fraud, errors or misrepresentations; meeting legal, regulatory or contractual requirements; and we may tell you about other related products and services that we believe meet your changing needs.</p>
+      <p>The only people who have access to your personal information are our employees, distribution partners such as advisors, and third-party service providers, along with our reinsurers. We will also provide access to anyone else you authorize. Sometimes, unless we are otherwise prohibited, these people may be in countries outside Canada, so your personal information may be subject to the laws of those countries. You can ask for the information in our files about you and, if necessary, ask us in writing to correct it. To find out more about our privacy practices, visit <a href="https://www.sunlife.ca/privacy" target="_blank">www.sunlife.ca/privacy</a>.</p>
+      <p>Questions? Please visit <a href="https://www.sunlife.ca" target="_blank">www.sunlife.ca</a> or call our toll-free number 1-800-361-6212 any business day from 8 a.m. to 8 p.m. ET.</p>
+    </div>
+
+  </div><!-- /doc-body -->
+
+  <div class="doc-footer-note">Page 1–3 of 3 &nbsp;|&nbsp; 5088-E-06-21</div>
+
+</div><!-- /doc -->
+
+<div id="toast"></div>
+<div id="prog">
+  <div class="prog-card">
+    <div class="prog-spinner"></div>
+    <h4 id="progTitle">Generating PDF…</h4>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-msg" id="progMsg">Please wait</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCRIPT
+════════════════════════════ -->
+<script>
+/* ── Toast ── */
+function showToast(msg,type='info',dur=4500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='show '+type;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),dur);
+}
+/* ── Progress ── */
+function progShow(t){ document.getElementById('progTitle').textContent=t; progSet(0,'Please wait…'); document.getElementById('prog').classList.add('active'); }
+function progSet(p,m){ document.getElementById('progFill').style.width=p+'%'; if(m) document.getElementById('progMsg').textContent=m; }
+function progHide(){ document.getElementById('prog').classList.remove('active'); }
+
+/* ════════════════
+   SIGNATURE PADS
+════════════════ */
+const pads = {};
+function makePad(key){
+  const canvas = document.getElementById(key+'Canvas');
+  const wrap   = document.getElementById(key+'Wrap');
+  const status = document.getElementById(key+'Status');
+  const snap   = document.getElementById(key+'Snap');
+  const ctx    = canvas.getContext('2d');
+  let drawing=false, lx=0, ly=0, hasSig=false;
+
+  function resize(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=canvas.getBoundingClientRect();
+    const prev=hasSig?canvas.toDataURL():null;
+    canvas.width=Math.round(rect.width*dpr);
+    canvas.height=Math.round(70*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    style();
+    if(prev){const i=new Image();i.onload=()=>ctx.drawImage(i,0,0,rect.width,70);i.src=prev;}
+  }
+  function style(){ ctx.strokeStyle='#111'; ctx.lineWidth=1.8; ctx.lineCap='round'; ctx.lineJoin='round'; }
+  function pos(e){ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; }
+  function start(e){ e.preventDefault(); drawing=true; const p=pos(e);[lx,ly]=[p.x,p.y]; ctx.beginPath();ctx.arc(p.x,p.y,.6,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();style();hasSig=true; wrap.classList.add('has-sig','active'); wrap.classList.remove('err'); }
+  function draw(e){ if(!drawing)return; e.preventDefault(); const p=pos(e); ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();[lx,ly]=[p.x,p.y]; }
+  function stop(){ if(!drawing)return; drawing=false; capture(); }
+  function capture(){ if(hasSig){ snap.src=canvas.toDataURL('image/png'); status.textContent='✓ Captured'; } }
+
+  canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',draw);
+  canvas.addEventListener('mouseup',stop);    canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',draw,{passive:false}); canvas.addEventListener('touchend',stop);
+  window.addEventListener('load',resize);
+  window.addEventListener('resize',()=>{ clearTimeout(canvas._rt); canvas._rt=setTimeout(resize,120); });
+  window.addEventListener('beforeprint', capture);
+  if(window.matchMedia){ window.matchMedia('print').addEventListener('change',e=>{ if(e.matches)capture(); }); }
+
+  pads[key]={
+    capture,
+    get hasSig(){ return hasSig; },
+    clear(){
+      const r=canvas.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height);
+      hasSig=false; drawing=false;
+      wrap.classList.remove('has-sig','active','err');
+      snap.src=''; status.textContent='';
+    }
+  };
+}
+makePad('sig4');
+makePad('sig5');
+function clearPad(k){ pads[k].clear(); }
+
+/* ── Auto-fill today's date ── */
+window.addEventListener('load',()=>{
+  const t=new Date(),p=n=>String(n).padStart(2,'0');
+  const today=`${p(t.getDate())}-${p(t.getMonth()+1)}-${t.getFullYear()}`;
+  document.getElementById('sig4Date').value=today;
+  document.getElementById('sig5Date').value=today;
+});
+
+/* ── Build PDF file name from Plan Member name ── */
+function buildFileName(){
+  const fn=(document.getElementById('pm_fname').value||'').trim();
+  const ln=(document.getElementById('pm_lname').value||'').trim();
+  const name=(fn+' '+ln).trim().replace(/\s+/g,'_')||'PlanMember';
+  return `SunLife_Consent_${name}.pdf`;
+}
+
+/* ── Hide / Show dynamic elements for PDF render ── */
+function hideForPDF(){
+  pads.sig4.capture(); pads.sig5.capture();
+  ['sig4Wrap','sig5Wrap'].forEach(id=>document.getElementById(id).style.display='none');
+  document.querySelectorAll('.sp-foot').forEach(el=>el.style.display='none');
+  ['sig4Snap','sig5Snap'].forEach(id=>document.getElementById(id).style.display='block');
+  document.querySelector('.toolbar').style.display='none';
+}
+function showAfterPDF(){
+  ['sig4Wrap','sig5Wrap'].forEach(id=>document.getElementById(id).style.display='');
+  document.querySelectorAll('.sp-foot').forEach(el=>el.style.display='');
+  ['sig4Snap','sig5Snap'].forEach(id=>document.getElementById(id).style.display='');
+  document.querySelector('.toolbar').style.display='';
+}
+
+/* ── Save PDF ── */
+async function savePDF(){
+  progShow('Generating PDF…');
+  try{
+    pads.sig4.capture(); pads.sig5.capture();
+    
+    // Store original placeholder attributes to restore later
+    const placeholderMap = new Map();
+    document.querySelectorAll('input[placeholder]').forEach(el => {
+      placeholderMap.set(el, el.getAttribute('placeholder'));
+      el.setAttribute('placeholder', '');
+    });
+    
+    hideForPDF();
+    progSet(20,'Rendering…');
+    await new Promise(r=>setTimeout(r,130));
+
+    const el=document.getElementById('formDoc');
+    const cvs=await html2canvas(el,{scale:2,useCORS:true,logging:false,backgroundColor:'#fff',allowTaint:true});
+
+    progSet(65,'Building PDF…');
+    await new Promise(r=>setTimeout(r,60));
+
+    const {jsPDF}=window.jspdf;
+    const img=cvs.toDataURL('image/jpeg',.93);
+    const ratio=cvs.height/cvs.width;
+    const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+    const aW=pdf.internal.pageSize.getWidth();
+    const aH=pdf.internal.pageSize.getHeight();
+    const fullH=aW*ratio;
+    let posY=0,page=0;
+    while(posY<fullH){
+      if(page>0) pdf.addPage();
+      pdf.addImage(img,'JPEG',0,-posY,aW,fullH,undefined,'FAST');
+      posY+=aH; page++;
+    }
+
+    progSet(95,'Finishing…');
+    await new Promise(r=>setTimeout(r,60));
+    
+    // Restore placeholders
+    placeholderMap.forEach((placeholder, el) => {
+      el.setAttribute('placeholder', placeholder);
+    });
+    
+    showAfterPDF();
+    progSet(100,'Done!');
+    pdf.save(buildFileName());
+    await new Promise(r=>setTimeout(r,400));
+    progHide();
+    showToast('✓ PDF saved to your downloads folder','success');
+  }catch(err){
+    showAfterPDF(); progHide(); console.error(err);
+    showToast('⚠ PDF generation failed — try Ctrl+P to print','error',6000);
+  }
+}
+
+/* ── Clear all ── */
+function clearAll(){
+  if(!confirm('Clear all fields and signatures? This cannot be undone.')) return;
+  document.querySelectorAll('.fill,.fill-underline').forEach(el=>el.value='');
+  pads.sig4.clear(); pads.sig5.clear();
+  const t=new Date(),p=n=>String(n).padStart(2,'0');
+  const today=`${p(t.getDate())}-${p(t.getMonth()+1)}-${t.getFullYear()}`;
+  document.getElementById('sig4Date').value=today;
+  document.getElementById('sig5Date').value=today;
+}
+</script>
+</body>
+</html>

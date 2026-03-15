@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Intake and Health History Form – ErinGlenWellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1c1c1e;
+  --rule:#1c2b3a;
+  --teal:#1a5f6e;
+  --teal-light:#e8f4f6;
+  --teal-mid:#2e8fa0;
+  --muted:#5a6472;
+  --border:#c8d0d8;
+  --bg:#eef0f2;
+  --paper:#ffffff;
+  --field:#f7f9fa;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Source Sans 3','Helvetica Neue',sans-serif;
+  --radius:3px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--ink);
+  padding:20px 12px 80px;
+  line-height:1.5;
+}
+
+/* ═══════════════════════════════════════════════
+   TOOLBAR
+═══════════════════════════════════════════════ */
+.toolbar{
+  max-width:860px;
+  margin:0 auto 14px;
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.toolbar-note{
+  font-size:11px;
+  color:var(--muted);
+  margin-right:auto;
+  font-style:italic;
+}
+.btn{
+  font-family:var(--sans);
+  font-size:11.5px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:9px 22px;
+  border:none;
+  border-radius:var(--radius);
+  cursor:pointer;
+  transition:all .18s;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-pdf{background:#1c2b3a;color:#fff}
+.btn-pdf:hover{background:#0f1a24}
+.btn-submit{background:var(--teal);color:#fff}
+.btn-submit:hover{background:#154d5a}
+.btn-clear{background:transparent;color:var(--rule);border:1.5px solid var(--rule)}
+.btn-clear:hover{background:var(--rule);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ═══════════════════════════════════════════════
+   PAPER
+═══════════════════════════════════════════════ */
+.page{
+  background:var(--paper);
+  max-width:860px;
+  margin:0 auto;
+  padding:36px 44px 48px;
+  box-shadow:0 6px 40px rgba(0,0,0,.12);
+  border-top:5px solid var(--rule);
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+.form-header{
+  text-align:center;
+  padding-bottom:18px;
+  margin-bottom:22px;
+  border-bottom:2px solid var(--rule);
+}
+.clinic-name{
+  font-family:var(--serif);
+  font-size:11pt;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:4px;
+}
+.form-title{
+  font-family:var(--serif);
+  font-size:22pt;
+  font-weight:700;
+  color:var(--rule);
+  line-height:1.15;
+}
+.form-subtitle{
+  font-size:11.5px;
+  color:var(--muted);
+  margin-top:8px;
+  line-height:1.6;
+  max-width:600px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* ═══════════════════════════════════════════════
+   SECTION HEADINGS
+═══════════════════════════════════════════════ */
+.section-head{
+  font-family:var(--sans);
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--paper);
+  background:var(--rule);
+  padding:6px 12px;
+  margin:22px -44px 16px;
+  padding-left:44px;
+}
+.sub-head{
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--teal);
+  border-bottom:1.5px solid var(--teal-light);
+  padding-bottom:4px;
+  margin:16px 0 10px;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+/* ═══════════════════════════════════════════════
+   FIELD ROWS
+═══════════════════════════════════════════════ */
+.row{display:flex;gap:14px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end}
+.col{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
+.col.w2{flex:2}
+.col.w3{flex:3}
+.col.fixed-160{flex:none;width:160px}
+.col.fixed-120{flex:none;width:120px}
+.col.fixed-80{flex:none;width:80px}
+
+label.fl{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+input[type=text],input[type=email],input[type=date],input[type=tel],select,textarea{
+  border:none;
+  border-bottom:1.5px solid var(--rule);
+  background:transparent;
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--ink);
+  padding:4px 4px 3px;
+  outline:none;
+  width:100%;
+  transition:border-color .15s,background .15s;
+  border-radius:0;
+}
+input:focus,select:focus,textarea:focus{
+  border-bottom-color:var(--teal);
+  background:var(--teal-light);
+}
+textarea{
+  resize:vertical;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:7px 9px;
+  min-height:56px;
+  line-height:1.55;
+}
+textarea:focus{border-color:var(--teal)}
+
+/* ═══════════════════════════════════════════════
+   INLINE NOTE
+═══════════════════════════════════════════════ */
+.note{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.55;
+  margin-bottom:10px;
+  font-style:italic;
+}
+
+/* ═══════════════════════════════════════════════
+   CHECKBOX + RADIO GROUPS
+═══════════════════════════════════════════════ */
+.inline-group{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.inline-group .lbl{font-size:12.5px;font-weight:600;color:var(--ink)}
+
+.chk-label,.rad-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12.5px;cursor:pointer;
+}
+input[type=checkbox],input[type=radio]{
+  accent-color:var(--teal);
+  width:14px;height:14px;
+  flex-shrink:0;cursor:pointer;
+}
+
+/* ═══════════════════════════════════════════════
+   PERMISSIONS ROW
+═══════════════════════════════════════════════ */
+.perm-row{
+  background:var(--teal-light);
+  border-left:3px solid var(--teal);
+  padding:9px 14px;
+  border-radius:0 var(--radius) var(--radius) 0;
+  margin-bottom:14px;
+  font-size:12px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.perm-row .lbl{font-weight:600;color:var(--rule)}
+
+/* ═══════════════════════════════════════════════
+   INSURANCE ROW
+═══════════════════════════════════════════════ */
+.yn-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:12px;font-size:12.5px}
+.yn-row .q{font-weight:600}
+
+/* ═══════════════════════════════════════════════
+   HEALTHCARE PRACTITIONERS
+═══════════════════════════════════════════════ */
+.practitioner-grid{
+  display:flex;flex-wrap:wrap;gap:8px 18px;
+  margin-bottom:10px;
+  padding:10px 14px;
+  background:var(--field);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+}
+
+/* ═══════════════════════════════════════════════
+   MEDICAL HISTORY TABLE
+═══════════════════════════════════════════════ */
+.med-table{width:100%;border-collapse:collapse;margin-bottom:4px}
+.med-table td{
+  border:1px solid var(--border);
+  padding:0;
+  vertical-align:top;
+}
+.med-table .med-lbl{
+  background:var(--field);
+  padding:8px 12px;
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--rule);
+  width:22%;
+  vertical-align:middle;
+  white-space:nowrap;
+}
+.med-table textarea{
+  border:none;
+  border-radius:0;
+  min-height:44px;
+  padding:8px 10px;
+  width:100%;
+}
+.med-table textarea:focus{border:none;background:var(--teal-light)}
+
+/* ═══════════════════════════════════════════════
+   BODY DIAGRAM
+═══════════════════════════════════════════════ */
+.body-diagram-wrap{
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px 16px 10px;
+  margin-bottom:16px;
+  background:var(--field);
+}
+.diagram-note{font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px;font-style:italic}
+.diagram-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.diagram-figure{text-align:center}
+.diagram-figure .fig-label{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
+.diagram-figure svg{cursor:crosshair;display:block;margin:0 auto;border:1px solid #dde3e8;border-radius:2px;background:#fff}
+.diagram-figure svg .area-zone{fill:transparent;stroke:none;cursor:crosshair}
+.diagram-figure svg .area-zone:hover{fill:rgba(26,95,110,.08)}
+.x-mark{font-size:13px;font-weight:700;fill:#d9534f;pointer-events:none}
+.diagram-legend{text-align:center;font-size:10.5px;color:var(--muted);margin-top:8px}
+.diagram-clear{
+  display:block;margin:8px auto 0;
+  font-family:var(--sans);font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 14px;border:1px solid var(--border);
+  border-radius:2px;background:transparent;cursor:pointer;
+  color:var(--muted);
+}
+.diagram-clear:hover{background:var(--rule);color:#fff;border-color:var(--rule)}
+
+/* ═══════════════════════════════════════════════
+   PAGE DIVIDER
+═══════════════════════════════════════════════ */
+.page-break-marker{
+  text-align:center;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin:28px 0;
+  display:flex;align-items:center;gap:12px;
+}
+.page-break-marker::before,.page-break-marker::after{
+  content:'';flex:1;border-top:1px dashed var(--border);
+}
+
+/* ═══════════════════════════════════════════════
+   HEALTH CHECKLIST (3-column)
+═══════════════════════════════════════════════ */
+.checklist-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:0 20px;
+  margin-bottom:14px;
+}
+.checklist-col{}
+.chk-section-head{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--teal);
+  text-decoration:underline;
+  text-underline-offset:3px;
+  margin:14px 0 7px;
+  display:block;
+}
+.chk-item{
+  display:flex;align-items:flex-start;gap:7px;
+  margin-bottom:5px;font-size:12px;
+  line-height:1.45;
+}
+.chk-item input[type=checkbox]{margin-top:1px}
+.chk-item .chk-txt-inline{
+  border:none;border-bottom:1px solid var(--border);
+  background:transparent;font-family:var(--sans);font-size:12px;
+  color:var(--ink);outline:none;width:110px;padding:0 3px;
+}
+
+/* ═══════════════════════════════════════════════
+   LIFESTYLE SECTION
+═══════════════════════════════════════════════ */
+.lifestyle-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px}
+.lifestyle-table td{padding:5px 10px;border:1px solid var(--border)}
+.lifestyle-table .ls-label{font-weight:600;background:var(--field);width:55%}
+.lifestyle-table .ls-opts{display:flex;gap:14px;align-items:center}
+
+/* ═══════════════════════════════════════════════
+   CONSENT
+═══════════════════════════════════════════════ */
+.consent-box{
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px 18px;
+  margin-bottom:18px;
+  background:var(--field);
+}
+.consent-box ul{padding-left:18px;list-style:disc}
+.consent-box li{font-size:12px;line-height:1.65;color:var(--ink);margin-bottom:4px}
+
+/* ═══════════════════════════════════════════════
+   SIGNATURE PAD
+═══════════════════════════════════════════════ */
+.sig-wrap{margin-top:10px}
+.sig-label-row{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:12px;
+}
+.sig-pad-box{
+  position:relative;
+  border:1.5px solid var(--rule);
+  border-radius:var(--radius);
+  background:#fdfdfc;
+  overflow:hidden;
+}
+.sig-pad-box canvas{
+  display:block;width:100%;height:120px;cursor:crosshair;touch-action:none;
+}
+.sig-watermark{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+  font-family:var(--serif);font-size:13pt;font-style:italic;
+  color:#ccc;letter-spacing:.04em;
+  transition:opacity .2s;
+}
+.sig-pad-box.has-sig .sig-watermark{opacity:0}
+.sig-controls{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:6px;
+}
+.sig-status{font-size:10px;color:#27a06a;font-family:var(--sans)}
+.sig-clear-btn{
+  font-family:var(--sans);font-size:9.5px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 14px;border-radius:var(--radius);cursor:pointer;
+  border:1.5px solid var(--rule);background:transparent;color:var(--rule);
+  transition:all .15s;
+}
+.sig-clear-btn:hover{background:var(--rule);color:#fff}
+
+/* Print snapshot – hidden on screen, shown on print */
+.sig-print-area{display:none;border:1.5px solid var(--rule);border-radius:var(--radius);width:100%;height:120px;background:#fdfdfc}
+.sig-print-area img{width:100%;height:100%;object-fit:contain;display:block}
+
+/* ═══════════════════════════════════════════════
+   FINAL ROW (Signature + Date)
+═══════════════════════════════════════════════ */
+.final-row{display:grid;grid-template-columns:2fr 1fr;gap:30px;margin-top:8px;align-items:end}
+.final-line{border-bottom:1.5px solid var(--rule);min-height:20px;width:100%}
+.final-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ═══════════════════════════════════════════════
+   TOAST NOTIFICATION
+═══════════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:28px;right:28px;
+  background:var(--rule);color:#fff;
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  padding:12px 22px;border-radius:var(--radius);
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;z-index:9999;
+}
+#toast.show{opacity:1}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════════ */
+#progress-overlay{
+  display:none;
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10000;
+  align-items:center;justify-content:center;flex-direction:column;gap:16px;
+}
+#progress-overlay.active{display:flex}
+.progress-card{
+  background:#fff;padding:28px 40px;border-radius:6px;
+  text-align:center;min-width:280px;
+  box-shadow:0 8px 40px rgba(0,0,0,.3);
+}
+.progress-card h3{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--rule);margin-bottom:12px}
+.progress-bar-track{
+  width:100%;height:6px;background:#e8ecef;border-radius:3px;overflow:hidden;
+}
+.progress-bar-fill{
+  height:100%;background:var(--teal);border-radius:3px;
+  width:0%;transition:width .3s;
+}
+.progress-msg{font-size:11.5px;color:var(--muted);margin-top:10px}
+
+/* ═══════════════════════════════════════════════
+   PRINT
+═══════════════════════════════════════════════ */
+@media print{
+  body{background:#fff;padding:0}
+  .toolbar,#toast,#progress-overlay,.page-break-marker{display:none}
+  .page{box-shadow:none;max-width:100%;padding:16px 24px 28px;border-top:4px solid #000}
+  .section-head{margin-left:-24px;padding-left:24px;margin-right:-24px}
+  input,textarea,select{background:transparent!important}
+  .sig-pad-box{display:none!important}
+  .sig-controls{display:none!important}
+  .sig-print-area{display:block!important}
+  .checklist-grid{grid-template-columns:1fr 1fr 1fr}
+}
+
+/* ═══════════════════════════════════════════════
+   SUBMIT CONFIG NOTE
+═══════════════════════════════════════════════ */
+.config-note{
+  max-width:860px;margin:0 auto 10px;
+  background:#fffbea;border:1px solid #f0d060;
+  border-radius:var(--radius);padding:10px 16px;
+  font-size:11.5px;color:#6b5000;
+}
+.config-note strong{display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <span class="toolbar-note">Fill all fields · Sign · Save or Submit</span>
+  <button class="btn btn-clear" onclick="clearAllFields()">↺ Clear</button>
+  <button class="btn btn-pdf"   onclick="savePDF()">⬇ Save PDF</button>
+  <button class="btn btn-submit" onclick="submitForm()">✉ Submit Form</button>
+</div>
+
+<!-- PAPER -->
+<div class="page" id="formPage">
+
+  <!-- HEADER -->
+  <div class="form-header">
+    <div class="clinic-name">ErinGlenWellness · 17624999 Canada Inc</div>
+    <div class="form-title">Intake and Health History Form</div>
+    <div class="form-subtitle">A complete health history helps us ensure it is safe to provide you with a massage treatment. Please let us know if your status changes. All information given is <strong>confidential</strong>.</div>
+  </div>
+
+  <!-- ═══ PERSONAL INFORMATION ═══ -->
+  <div class="section-head">Personal Information</div>
+
+  <div class="row">
+    <div class="col w3"><label class="fl">Full Name</label><input type="text" id="fullName" name="fullName" placeholder="First and Last name"/></div>
+    <div class="col w2"><label class="fl">Email Address</label><input type="email" id="email" name="email" placeholder="name@email.com"/></div>
+  </div>
+
+  <div class="note">We collect your email address to send you appointment reminders. Your email address will never be shared with a third party.</div>
+
+  <div class="perm-row">
+    <span class="lbl">Do we have your permission to also send you our:</span>
+    <label class="chk-label"><input type="checkbox" id="perm_news" name="perm_news"/> Newsletters</label>
+    <label class="chk-label"><input type="checkbox" id="perm_promo" name="perm_promo"/> Promotional Offers</label>
+  </div>
+
+  <div class="row">
+    <div class="col"><label class="fl">Home Phone</label><input type="tel" id="phoneHome" name="phoneHome" placeholder="(000) 000-0000"/></div>
+    <div class="col"><label class="fl">Cell Phone</label><input type="tel" id="phoneCell" name="phoneCell" placeholder="(000) 000-0000"/></div>
+    <div class="col"><label class="fl">Work Phone</label><input type="tel" id="phoneWork" name="phoneWork" placeholder="(000) 000-0000"/></div>
+  </div>
+
+  <div class="row">
+    <div class="col w2"><label class="fl">Street Address</label><input type="text" id="addrStreet" name="addrStreet" placeholder="Street address"/></div>
+    <div class="col fixed-80"><label class="fl">Unit</label><input type="text" id="addrUnit" name="addrUnit" placeholder="Unit #"/></div>
+    <div class="col"><label class="fl">City</label><input type="text" id="addrCity" name="addrCity" placeholder="City"/></div>
+    <div class="col fixed-80"><label class="fl">Province</label><input type="text" id="addrProv" name="addrProv" placeholder="ON"/></div>
+    <div class="col fixed-120"><label class="fl">Postal Code</label><input type="text" id="addrPostal" name="addrPostal" placeholder="A1A 1A1"/></div>
+  </div>
+
+  <div class="row">
+    <div class="col fixed-160"><label class="fl">Date of Birth (MM-DD-YY)</label><input type="date" id="dob" name="dob"/></div>
+    <div class="col fixed-80"><label class="fl">Age</label><input type="text" id="age" name="age" placeholder="—"/></div>
+    <div class="col w2"><label class="fl">Occupation</label><input type="text" id="occupation" name="occupation" placeholder="Job title / employer"/></div>
+    <div class="col w2"><label class="fl">How Did You Hear About Us?</label><input type="text" id="referral" name="referral" placeholder="Referral, Google, social media…"/></div>
+  </div>
+
+  <!-- ═══ INSURANCE & DOCTOR ═══ -->
+  <div class="section-head">Insurance &amp; Doctor</div>
+
+  <div class="yn-row">
+    <span class="q">Do you have insurance coverage for massage?</span>
+    <label class="rad-label"><input type="radio" name="insurance" value="yes"/> Yes</label>
+    <label class="rad-label"><input type="radio" name="insurance" value="no"/> No</label>
+    <span class="q" style="margin-left:20px">If yes, referred by your doctor?</span>
+    <label class="rad-label"><input type="radio" name="doctorRef" value="yes"/> Yes</label>
+    <label class="rad-label"><input type="radio" name="doctorRef" value="no"/> No</label>
+  </div>
+
+  <div class="row">
+    <div class="col w2"><label class="fl">Doctor's Name</label><input type="text" id="docName" name="docName" placeholder="Dr. First Last"/></div>
+    <div class="col"><label class="fl">Doctor's Phone</label><input type="tel" id="docPhone" name="docPhone" placeholder="(000) 000-0000"/></div>
+    <div class="col fixed-160"><label class="fl">Last Check-up Date</label><input type="date" id="lastCheckup" name="lastCheckup"/></div>
+  </div>
+
+  <div class="row">
+    <div class="col w2"><label class="fl">Doctor's Street</label><input type="text" id="docStreet" name="docStreet" placeholder="Street address"/></div>
+    <div class="col fixed-80"><label class="fl">Unit</label><input type="text" id="docUnit" name="docUnit" placeholder="#"/></div>
+    <div class="col"><label class="fl">City</label><input type="text" id="docCity" name="docCity" placeholder="City"/></div>
+    <div class="col fixed-80"><label class="fl">Prov.</label><input type="text" id="docProv" name="docProv" placeholder="ON"/></div>
+    <div class="col fixed-120"><label class="fl">Postal Code</label><input type="text" id="docPostal" name="docPostal" placeholder="A1A 1A1"/></div>
+  </div>
+
+  <!-- ═══ MASSAGE HISTORY ═══ -->
+  <div class="section-head">Massage &amp; Healthcare History</div>
+
+  <div class="yn-row">
+    <span class="q">Have you had a professional massage before?</span>
+    <label class="rad-label"><input type="radio" name="prevMassage" value="yes"/> Yes</label>
+    <label class="rad-label"><input type="radio" name="prevMassage" value="no"/> No</label>
+    <span style="margin-left:16px;font-size:12px;">Approx. date of last therapeutic massage:</span>
+    <input type="text" id="lastMassage" name="lastMassage" placeholder="Month / Year" style="width:130px;flex:none"/>
+  </div>
+
+  <div style="font-size:12.5px;font-weight:600;margin-bottom:8px;">Do you see other healthcare practitioners?</div>
+  <div class="practitioner-grid">
+    <label class="chk-label"><input type="checkbox" id="hcp_chiro" name="hcp_chiro"/> Chiropractor</label>
+    <label class="chk-label"><input type="checkbox" id="hcp_physio" name="hcp_physio"/> Physiotherapist</label>
+    <label class="chk-label"><input type="checkbox" id="hcp_naturo" name="hcp_naturo"/> Naturopath</label>
+    <label class="chk-label"><input type="checkbox" id="hcp_osteo" name="hcp_osteo"/> Osteopath</label>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <span style="font-size:12px;font-weight:600;">Other:</span>
+      <input type="text" id="hcp_other" name="hcp_other" placeholder="Specify…" style="width:180px;flex:none"/>
+    </div>
+  </div>
+
+  <!-- ═══ INSURANCE DETAILS ═══ -->
+  <div class="section-head">Insurance Information</div>
+  
+  <!-- Primary Insurance -->
+  <div style="margin-bottom:28px;">
+    <div style="font-weight:600;font-size:12px;color:var(--rule);margin-bottom:12px;">Primary Insurance</div>
+    <table class="med-table">
+      <tr>
+        <td class="med-lbl">Policy Holder - First Name</td>
+        <td><input type="text" id="ins1_ph_fname" name="ins1_ph_fname" placeholder="First name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+        <td class="med-lbl">Last Name</td>
+        <td><input type="text" id="ins1_ph_lname" name="ins1_ph_lname" placeholder="Last name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Policy Number</td>
+        <td><input type="text" id="ins1_policy_num" name="ins1_policy_num" placeholder="Policy #" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+        <td class="med-lbl">Certificate/ID</td>
+        <td><input type="text" id="ins1_cert_id" name="ins1_cert_id" placeholder="Certificate/ID #" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Date of Birth</td>
+        <td colspan="3"><input type="date" id="ins1_dob" name="ins1_dob" style="width:200px;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Patient First Name</td>
+        <td><input type="text" id="ins1_patient_fname" name="ins1_patient_fname" placeholder="Patient first name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+        <td class="med-lbl">Patient Last Name</td>
+        <td><input type="text" id="ins1_patient_lname" name="ins1_patient_lname" placeholder="Patient last name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Relationship to Policy Holder</td>
+        <td colspan="3">
+          <select id="ins1_relationship" name="ins1_relationship" style="width:220px;padding:8px;border:1px solid var(--border);border-radius:3px;">
+            <option value="">-- Select relationship --</option>
+            <option value="Son">Son</option>
+            <option value="Daughter">Daughter</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Policy Holder">Policy Holder (Self)</option>
+            <option value="Parent">Parent</option>
+            <option value="Other">Other</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Secondary Insurance Question -->
+  <div style="margin-bottom:20px;padding:12px;background:#f5f5f5;border-radius:3px;border-left:3px solid var(--teal);">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+      <input type="checkbox" id="hasSecondaryIns" name="hasSecondaryIns" style="width:18px;height:18px;cursor:pointer;"/>
+      <span style="font-size:12px;font-weight:600;color:var(--rule);">Do you have additional insurance?</span>
+    </label>
+  </div>
+
+  <!-- Secondary Insurance (hidden by default) -->
+  <div id="secondaryInsSection" style="display:none;margin-bottom:28px;">
+    <div style="font-weight:600;font-size:12px;color:var(--rule);margin-bottom:12px;">Secondary Insurance</div>
+    <table class="med-table">
+      <tr>
+        <td class="med-lbl">Policy Holder - First Name</td>
+        <td><input type="text" id="ins2_ph_fname" name="ins2_ph_fname" placeholder="First name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+        <td class="med-lbl">Last Name</td>
+        <td><input type="text" id="ins2_ph_lname" name="ins2_ph_lname" placeholder="Last name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Policy Number</td>
+        <td><input type="text" id="ins2_policy_num" name="ins2_policy_num" placeholder="Policy #" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+        <td class="med-lbl">Certificate/ID</td>
+        <td><input type="text" id="ins2_cert_id" name="ins2_cert_id" placeholder="Certificate/ID #" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Date of Birth</td>
+        <td colspan="3"><input type="date" id="ins2_dob" name="ins2_dob" style="width:200px;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Patient First Name</td>
+        <td><input type="text" id="ins2_patient_fname" name="ins2_patient_fname" placeholder="Patient first name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+        <td class="med-lbl">Patient Last Name</td>
+        <td><input type="text" id="ins2_patient_lname" name="ins2_patient_lname" placeholder="Patient last name" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:3px;"/></td>
+      </tr>
+      <tr>
+        <td class="med-lbl">Relationship to Policy Holder</td>
+        <td colspan="3">
+          <select id="ins2_relationship" name="ins2_relationship" style="width:220px;padding:8px;border:1px solid var(--border);border-radius:3px;">
+            <option value="">-- Select relationship --</option>
+            <option value="Son">Son</option>
+            <option value="Daughter">Daughter</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Policy Holder">Policy Holder (Self)</option>
+            <option value="Parent">Parent</option>
+            <option value="Other">Other</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══ MEDICAL HISTORY ═══ -->
+  <div class="section-head">Medical History</div>
+  <table class="med-table">
+    <tr><td class="med-lbl">Current Medications</td><td><textarea id="meds" name="meds" placeholder="List current medications and dosages…"></textarea></td></tr>
+    <tr><td class="med-lbl">Previous Major Illnesses / Operations <span style="font-weight:400;font-size:10.5px">(with dates)</span></td><td><textarea id="illnesses" name="illnesses" placeholder="e.g. Appendectomy – 2018, Pneumonia – 2020…"></textarea></td></tr>
+    <tr><td class="med-lbl">Allergies / Hypersensitivities</td><td><textarea id="allergies" name="allergies" placeholder="Food, medication, environmental, latex, oils…"></textarea></td></tr>
+    <tr><td class="med-lbl">Family History of</td><td><textarea id="famHistory" name="famHistory" placeholder="Heart disease, cancer, diabetes…"></textarea></td></tr>
+    <tr><td class="med-lbl">Major Accidents <span style="font-weight:400;font-size:10.5px">(with dates)</span></td><td><textarea id="accidents" name="accidents" placeholder="MVA – 2019, Work injury – 2021…"></textarea></td></tr>
+    <tr><td class="med-lbl">Other Serious Medical Conditions</td><td><textarea id="otherConditions" name="otherConditions" placeholder="Any other relevant medical information…"></textarea></td></tr>
+  </table>
+
+  <!-- ═══ BODY DIAGRAM ═══ -->
+  <div class="section-head">Areas of Focus / Pain</div>
+  <div class="body-diagram-wrap">
+    <div class="diagram-note">Click on the body diagrams to mark areas of focus or pain with ✕</div>
+    <div class="diagram-grid" id="diagramGrid">
+      <!-- Front Male -->
+      <div class="diagram-figure">
+        <div class="fig-label">Front (Male)</div>
+        <svg id="bodyFM" width="95" height="200" viewBox="0 0 95 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Head --><ellipse cx="47" cy="18" rx="13" ry="15" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Neck --><rect x="41" y="31" width="12" height="10" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Shoulders --><path d="M20,41 Q47,36 74,41 L78,56 Q47,52 16,56 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Torso --><rect x="28" y="55" width="38" height="55" rx="3" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Left arm --><path d="M16,55 L10,100 L14,100 L20,70 L26,55 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Right arm --><path d="M79,55 L85,100 L81,100 L75,70 L69,55 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Left forearm --><path d="M10,100 L6,140 L12,140 L14,100 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Right forearm --><path d="M85,100 L89,140 L83,140 L81,100 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Left hand --><ellipse cx="9" cy="144" rx="5" ry="7" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Right hand --><ellipse cx="86" cy="144" rx="5" ry="7" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Hips/Pelvis --><path d="M28,110 L20,130 Q47,134 74,130 L66,110 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Left thigh --><path d="M20,130 L14,168 L28,168 L32,130 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Right thigh --><path d="M74,130 L80,168 L66,168 L62,130 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Left calf --><path d="M14,168 L10,196 L24,196 L28,168 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Right calf --><path d="M80,168 L84,196 L70,196 L66,168 Z" fill="#e8d5c0" stroke="#999" stroke-width="1"/>
+          <!-- Clickable overlay zones -->
+          <rect class="area-zone" data-area="Head" x="34" y="3" width="26" height="30"/>
+          <rect class="area-zone" data-area="Neck" x="38" y="31" width="18" height="12"/>
+          <rect class="area-zone" data-area="L.Shoulder" x="16" y="38" width="26" height="20"/>
+          <rect class="area-zone" data-area="R.Shoulder" x="52" y="38" width="26" height="20"/>
+          <rect class="area-zone" data-area="Chest" x="28" y="55" width="38" height="30"/>
+          <rect class="area-zone" data-area="Abdomen" x="28" y="84" width="38" height="26"/>
+          <rect class="area-zone" data-area="L.Upper Arm" x="10" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="R.Upper Arm" x="66" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="L.Forearm" x="4" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="R.Forearm" x="76" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="L.Hand" x="4" y="138" width="12" height="14"/>
+          <rect class="area-zone" data-area="R.Hand" x="78" y="138" width="12" height="14"/>
+          <rect class="area-zone" data-area="Hips" x="22" y="110" width="50" height="22"/>
+          <rect class="area-zone" data-area="L.Thigh" x="14" y="130" width="20" height="40"/>
+          <rect class="area-zone" data-area="R.Thigh" x="60" y="130" width="20" height="40"/>
+          <rect class="area-zone" data-area="L.Knee" x="14" y="164" width="16" height="12"/>
+          <rect class="area-zone" data-area="R.Knee" x="62" y="164" width="16" height="12"/>
+          <rect class="area-zone" data-area="L.Calf" x="10" y="174" width="16" height="24"/>
+          <rect class="area-zone" data-area="R.Calf" x="66" y="174" width="16" height="24"/>
+          <g id="marks_FM"></g>
+        </svg>
+      </div>
+      <!-- Front Female -->
+      <div class="diagram-figure">
+        <div class="fig-label">Front (Female)</div>
+        <svg id="bodyFF" width="95" height="200" viewBox="0 0 95 200" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="47" cy="18" rx="13" ry="15" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <rect x="41" y="31" width="12" height="10" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M20,41 Q47,36 74,41 L78,56 Q47,52 16,56 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <!-- Torso with curves --><path d="M28,55 Q22,72 24,90 Q28,108 30,110 L64,110 Q66,108 70,90 Q72,72 66,55 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M16,55 L10,100 L14,100 L20,70 L26,55 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M79,55 L85,100 L81,100 L75,70 L69,55 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M10,100 L6,140 L12,140 L14,100 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M85,100 L89,140 L83,140 L81,100 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <ellipse cx="9" cy="144" rx="5" ry="7" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <ellipse cx="86" cy="144" rx="5" ry="7" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M30,110 L20,132 Q47,138 74,132 L64,110 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M20,132 L14,170 L28,170 L32,132 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M74,132 L80,170 L66,170 L62,132 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M14,170 L10,196 L24,196 L28,170 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <path d="M80,170 L84,196 L70,196 L66,170 Z" fill="#f0c8d0" stroke="#bbb" stroke-width="1"/>
+          <rect class="area-zone" data-area="Head" x="34" y="3" width="26" height="30"/>
+          <rect class="area-zone" data-area="Neck" x="38" y="31" width="18" height="12"/>
+          <rect class="area-zone" data-area="L.Shoulder" x="16" y="38" width="26" height="20"/>
+          <rect class="area-zone" data-area="R.Shoulder" x="52" y="38" width="26" height="20"/>
+          <rect class="area-zone" data-area="Chest" x="26" y="55" width="42" height="30"/>
+          <rect class="area-zone" data-area="Abdomen" x="26" y="84" width="42" height="28"/>
+          <rect class="area-zone" data-area="L.Upper Arm" x="10" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="R.Upper Arm" x="66" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="L.Forearm" x="4" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="R.Forearm" x="76" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="L.Hand" x="4" y="138" width="12" height="14"/>
+          <rect class="area-zone" data-area="R.Hand" x="78" y="138" width="12" height="14"/>
+          <rect class="area-zone" data-area="Hips" x="22" y="110" width="50" height="24"/>
+          <rect class="area-zone" data-area="L.Thigh" x="14" y="132" width="20" height="40"/>
+          <rect class="area-zone" data-area="R.Thigh" x="60" y="132" width="20" height="40"/>
+          <rect class="area-zone" data-area="L.Knee" x="14" y="166" width="16" height="12"/>
+          <rect class="area-zone" data-area="R.Knee" x="62" y="166" width="16" height="12"/>
+          <rect class="area-zone" data-area="L.Calf" x="10" y="176" width="16" height="22"/>
+          <rect class="area-zone" data-area="R.Calf" x="66" y="176" width="16" height="22"/>
+          <g id="marks_FF"></g>
+        </svg>
+      </div>
+      <!-- Back Male -->
+      <div class="diagram-figure">
+        <div class="fig-label">Back (Male)</div>
+        <svg id="bodyBM" width="95" height="200" viewBox="0 0 95 200" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="47" cy="18" rx="13" ry="15" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <rect x="41" y="31" width="12" height="10" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M18,41 Q47,36 76,41 L80,56 Q47,52 14,56 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <rect x="26" y="55" width="42" height="55" rx="3" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M14,55 L8,100 L12,100 L18,70 L24,55 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M81,55 L87,100 L83,100 L77,70 L71,55 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M8,100 L4,140 L10,140 L12,100 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M87,100 L91,140 L85,140 L83,100 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <ellipse cx="7" cy="144" rx="5" ry="7" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <ellipse cx="88" cy="144" rx="5" ry="7" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M26,110 L18,132 Q47,136 76,132 L68,110 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M18,132 L12,170 L26,170 L30,132 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M76,132 L82,170 L68,170 L64,132 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M12,170 L8,196 L22,196 L26,170 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <path d="M82,170 L86,196 L72,196 L68,170 Z" fill="#d4c8b8" stroke="#999" stroke-width="1"/>
+          <line x1="47" y1="55" x2="47" y2="110" stroke="#bbb" stroke-width="0.5" stroke-dasharray="2,2"/>
+          <rect class="area-zone" data-area="Back of Head" x="34" y="3" width="26" height="30"/>
+          <rect class="area-zone" data-area="Upper Back" x="26" y="55" width="42" height="28"/>
+          <rect class="area-zone" data-area="Mid Back" x="26" y="83" width="42" height="27"/>
+          <rect class="area-zone" data-area="L.Shoulder(B)" x="14" y="38" width="26" height="22"/>
+          <rect class="area-zone" data-area="R.Shoulder(B)" x="54" y="38" width="26" height="22"/>
+          <rect class="area-zone" data-area="L.Upper Arm(B)" x="8" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="R.Upper Arm(B)" x="68" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="L.Forearm(B)" x="2" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="R.Forearm(B)" x="78" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="Low Back" x="26" y="110" width="42" height="22"/>
+          <rect class="area-zone" data-area="Glutes-L" x="18" y="128" width="28" height="16"/>
+          <rect class="area-zone" data-area="Glutes-R" x="48" y="128" width="28" height="16"/>
+          <rect class="area-zone" data-area="L.Hamstring" x="12" y="132" width="20" height="40"/>
+          <rect class="area-zone" data-area="R.Hamstring" x="62" y="132" width="20" height="40"/>
+          <rect class="area-zone" data-area="L.Calf(B)" x="8" y="170" width="18" height="28"/>
+          <rect class="area-zone" data-area="R.Calf(B)" x="66" y="170" width="18" height="28"/>
+          <g id="marks_BM"></g>
+        </svg>
+      </div>
+      <!-- Back Female -->
+      <div class="diagram-figure">
+        <div class="fig-label">Back (Female)</div>
+        <svg id="bodyBF" width="95" height="200" viewBox="0 0 95 200" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="47" cy="18" rx="13" ry="15" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <rect x="41" y="31" width="12" height="10" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M20,41 Q47,36 74,41 L78,56 Q47,52 16,56 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M28,55 Q22,72 24,90 Q28,108 30,112 L64,112 Q66,108 70,90 Q72,72 66,55 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M16,55 L10,100 L14,100 L20,70 L26,55 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M79,55 L85,100 L81,100 L75,70 L69,55 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M10,100 L6,140 L12,140 L14,100 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M85,100 L89,140 L83,140 L81,100 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <ellipse cx="9" cy="144" rx="5" ry="7" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <ellipse cx="86" cy="144" rx="5" ry="7" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M30,112 L18,136 Q47,142 76,136 L64,112 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M18,136 L12,172 L26,172 L30,136 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M76,136 L82,172 L68,172 L64,136 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M12,172 L8,196 L22,196 L26,172 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <path d="M82,172 L86,196 L72,196 L68,172 Z" fill="#e8bcc8" stroke="#bbb" stroke-width="1"/>
+          <rect class="area-zone" data-area="Back of Head" x="34" y="3" width="26" height="30"/>
+          <rect class="area-zone" data-area="Upper Back" x="26" y="55" width="42" height="28"/>
+          <rect class="area-zone" data-area="Mid Back" x="26" y="83" width="42" height="30"/>
+          <rect class="area-zone" data-area="L.Shoulder(B)" x="16" y="38" width="26" height="22"/>
+          <rect class="area-zone" data-area="R.Shoulder(B)" x="52" y="38" width="26" height="22"/>
+          <rect class="area-zone" data-area="L.Upper Arm(B)" x="10" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="R.Upper Arm(B)" x="66" y="54" width="18" height="48"/>
+          <rect class="area-zone" data-area="L.Forearm(B)" x="4" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="R.Forearm(B)" x="78" y="100" width="14" height="42"/>
+          <rect class="area-zone" data-area="Low Back" x="26" y="112" width="42" height="24"/>
+          <rect class="area-zone" data-area="Glutes-L" x="18" y="132" width="28" height="16"/>
+          <rect class="area-zone" data-area="Glutes-R" x="48" y="132" width="28" height="16"/>
+          <rect class="area-zone" data-area="L.Hamstring" x="12" y="136" width="20" height="38"/>
+          <rect class="area-zone" data-area="R.Hamstring" x="62" y="136" width="20" height="38"/>
+          <rect class="area-zone" data-area="L.Calf(B)" x="8" y="172" width="18" height="26"/>
+          <rect class="area-zone" data-area="R.Calf(B)" x="66" y="172" width="18" height="26"/>
+          <g id="marks_BF"></g>
+        </svg>
+      </div>
+    </div>
+    <div class="diagram-legend">Click any body area to mark ✕ · Click again to remove · <button class="diagram-clear" onclick="clearAllMarks()">Clear All Marks</button></div>
+    <input type="hidden" id="markedAreas" name="markedAreas"/>
+  </div>
+
+  <!-- ═══ PAGE 2 MARKER ═══ -->
+  <div class="page-break-marker">Please continue — Page 2 of 2</div>
+
+  <!-- P2 HEADER -->
+  <div style="text-align:center;margin-bottom:16px;">
+    <div class="form-title" style="font-size:16pt">Intake and Health History Form</div>
+    <div class="form-subtitle" style="font-size:11px">Please check all that apply to you</div>
+  </div>
+
+  <!-- ═══ HEALTH CHECKLIST ═══ -->
+  <div class="section-head">Health Checklist</div>
+
+  <div class="checklist-grid">
+    <!-- COLUMN 1 -->
+    <div class="checklist-col">
+      <span class="chk-section-head">General Symptoms</span>
+      <div class="chk-item"><input type="checkbox" id="c_faint" name="c_faint"/><label for="c_faint">Fainting / Dizziness</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_sleep" name="c_sleep"/><label for="c_sleep">Difficulty Sleeping / Fatigue</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_stress" name="c_stress"/><label for="c_stress">Stress</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_head" name="c_head"/><label for="c_head">Headaches / Migraines</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_nerv" name="c_nerv"/><label for="c_nerv">Nervousness</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_numb" name="c_numb"/><label for="c_numb">Numbness / Tingling</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_para" name="c_para"/><label for="c_para">Paralysis</label></div>
+
+      <span class="chk-section-head">Skin</span>
+      <div class="chk-item"><input type="checkbox" id="c_rash" name="c_rash"/><label for="c_rash">Rashes</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_dry" name="c_dry"/><label for="c_dry">Excessive Dryness</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_acne" name="c_acne"/><label for="c_acne">Acne</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_psor" name="c_psor"/><label for="c_psor">Psoriasis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ecz" name="c_ecz"/><label for="c_ecz">Eczema</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_skcnc" name="c_skcnc"/><label for="c_skcnc">Skin Cancer</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_bruise" name="c_bruise"/><label for="c_bruise">Bruise Easily</label></div>
+
+      <span class="chk-section-head">Infections</span>
+      <div class="chk-item"><input type="checkbox" id="c_hep" name="c_hep"/><label for="c_hep">Hepatitis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_tb" name="c_tb"/><label for="c_tb">Tuberculosis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_hiv" name="c_hiv"/><label for="c_hiv">HIV / AIDS</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_herp" name="c_herp"/><label for="c_herp">Herpes</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_athf" name="c_athf"/><label for="c_athf">Athlete's Foot</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_warts" name="c_warts"/><label for="c_warts">Warts</label></div>
+
+      <span class="chk-section-head">Respiratory</span>
+      <div class="chk-item"><input type="checkbox" id="c_cough" name="c_cough"/><label for="c_cough">Chronic Cough</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_bron" name="c_bron"/><label for="c_bron">Bronchitis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_asth" name="c_asth"/><label for="c_asth">Asthma</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_sob" name="c_sob"/><label for="c_sob">Shortness of Breath</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_emph" name="c_emph"/><label for="c_emph">Emphysema</label></div>
+      <div class="chk-item" style="align-items:center;gap:5px;">
+        <input type="checkbox" id="c_resp_fam" name="c_resp_fam"/>
+        <label for="c_resp_fam">Family History of</label>
+        <input class="chk-txt-inline" type="text" id="c_resp_fam_txt" name="c_resp_fam_txt" placeholder="specify"/>
+      </div>
+
+      <span class="chk-section-head">Lifestyle <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">(circle all that apply)</span></span>
+      <table class="lifestyle-table">
+        <tr>
+          <td class="ls-label">Regular Exercise</td>
+          <td><div class="ls-opts">
+            <label class="rad-label"><input type="radio" name="ls_exercise" value="yes"/> Yes</label>
+            <label class="rad-label"><input type="radio" name="ls_exercise" value="no"/> No</label>
+            <label class="rad-label"><input type="radio" name="ls_exercise" value="mostly"/> Mostly</label>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="ls-label">Drink Plenty of Water</td>
+          <td><div class="ls-opts">
+            <label class="rad-label"><input type="radio" name="ls_water" value="yes"/> Yes</label>
+            <label class="rad-label"><input type="radio" name="ls_water" value="no"/> No</label>
+            <label class="rad-label"><input type="radio" name="ls_water" value="mostly"/> Mostly</label>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="ls-label">8 Hours Sleep Nightly</td>
+          <td><div class="ls-opts">
+            <label class="rad-label"><input type="radio" name="ls_sleep" value="yes"/> Yes</label>
+            <label class="rad-label"><input type="radio" name="ls_sleep" value="no"/> No</label>
+            <label class="rad-label"><input type="radio" name="ls_sleep" value="mostly"/> Mostly</label>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="ls-label">Good Eating Habits</td>
+          <td><div class="ls-opts">
+            <label class="rad-label"><input type="radio" name="ls_eating" value="yes"/> Yes</label>
+            <label class="rad-label"><input type="radio" name="ls_eating" value="no"/> No</label>
+            <label class="rad-label"><input type="radio" name="ls_eating" value="mostly"/> Mostly</label>
+          </div></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- COLUMN 2 -->
+    <div class="checklist-col">
+      <span class="chk-section-head">Joint / Muscle Discomfort</span>
+      <div class="chk-item"><input type="checkbox" id="c_jaw" name="c_jaw"/><label for="c_jaw">Jaw</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_neck" name="c_neck"/><label for="c_neck">Neck</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_shld" name="c_shld"/><label for="c_shld">Shoulders</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_arms" name="c_arms"/><label for="c_arms">Arms</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_hands" name="c_hands"/><label for="c_hands">Hands</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_upbk" name="c_upbk"/><label for="c_upbk">Upper Back</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_midbk" name="c_midbk"/><label for="c_midbk">Mid Back</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_lobk" name="c_lobk"/><label for="c_lobk">Low Back</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_hips" name="c_hips"/><label for="c_hips">Hips</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_legs" name="c_legs"/><label for="c_legs">Legs</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_knees" name="c_knees"/><label for="c_knees">Knees</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_feet" name="c_feet"/><label for="c_feet">Feet</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_burs" name="c_burs"/><label for="c_burs">Bursitis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_arth" name="c_arth"/><label for="c_arth">Arthritis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_arth_fam" name="c_arth_fam"/><label for="c_arth_fam">Family History of Arthritis</label></div>
+
+      <span class="chk-section-head">Do You Have / Had?</span>
+      <div class="chk-item"><input type="checkbox" id="c_diab" name="c_diab"/><label for="c_diab">Diabetes</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_canc" name="c_canc"/><label for="c_canc">Cancer</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_epil" name="c_epil"/><label for="c_epil">Epilepsy</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_aneu" name="c_aneu"/><label for="c_aneu">Aneurysm / Stroke</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_neur" name="c_neur"/><label for="c_neur">Neuromuscular Conditions</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_glyc" name="c_glyc"/><label for="c_glyc">Hypo / Hyper Glycaemic</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_depr" name="c_depr"/><label for="c_depr">Depression</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ms" name="c_ms"/><label for="c_ms">Multiple Sclerosis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_thyr" name="c_thyr"/><label for="c_thyr">Thyroid Problems</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_fibr" name="c_fibr"/><label for="c_fibr">Fibromyalgia</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_oste" name="c_oste"/><label for="c_oste">Osteoporosis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ment" name="c_ment"/><label for="c_ment">Mental Illness</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_impl" name="c_impl"/><label for="c_impl">Artificial Implants / Pins / Plates</label></div>
+      <div class="chk-item" style="align-items:center;gap:5px;padding-left:20px;">
+        <label style="font-size:12px;">Where:</label>
+        <input class="chk-txt-inline" type="text" id="c_impl_where" name="c_impl_where" placeholder="location(s)" style="width:130px"/>
+      </div>
+
+      <span class="chk-section-head">Male / Female</span>
+      <div class="chk-item"><input type="checkbox" id="c_prost" name="c_prost"/><label for="c_prost">Prostate</label></div>
+      <div class="chk-item" style="align-items:center;gap:5px;">
+        <input type="checkbox" id="c_preg" name="c_preg"/>
+        <label for="c_preg">Pregnant; Due Date</label>
+        <input class="chk-txt-inline" type="text" id="c_preg_date" name="c_preg_date" placeholder="MM/YY" style="width:70px"/>
+      </div>
+      <div class="chk-item"><input type="checkbox" id="c_mcrmp" name="c_mcrmp"/><label for="c_mcrmp">Menstrual Cramping</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_mcirreg" name="c_mcirreg"/><label for="c_mcirreg">Menstrual Irregularity</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_bc" name="c_bc"/><label for="c_bc">Birth Control</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_vagp" name="c_vagp"/><label for="c_vagp">Vaginal Pain / Infections</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_brst" name="c_brst"/><label for="c_brst">Breast Pain / Lumps</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_meno" name="c_meno"/><label for="c_meno">Menopausal</label></div>
+    </div>
+
+    <!-- COLUMN 3 -->
+    <div class="checklist-col">
+      <span class="chk-section-head">Cardiovascular</span>
+      <div class="chk-item"><input type="checkbox" id="c_hbp" name="c_hbp"/><label for="c_hbp">High Blood Pressure</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_lbp" name="c_lbp"/><label for="c_lbp">Low Blood Pressure</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ha" name="c_ha"/><label for="c_ha">Heart Attack / Disease</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_chf" name="c_chf"/><label for="c_chf">Congestive Heart Failure</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_strk" name="c_strk"/><label for="c_strk">Stroke / Aneurysm</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_hmur" name="c_hmur"/><label for="c_hmur">Heart Murmur</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_pace" name="c_pace"/><label for="c_pace">Pacemaker</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_hchol" name="c_hchol"/><label for="c_hchol">High Cholesterol</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_swank" name="c_swank"/><label for="c_swank">Swelling of Ankles</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_coldf" name="c_coldf"/><label for="c_coldf">Cold Hands / Feet</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_pcirc" name="c_pcirc"/><label for="c_pcirc">Poor Circulation</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_vari" name="c_vari"/><label for="c_vari">Varicose Veins / Phlebitis</label></div>
+      <div class="chk-item" style="align-items:center;gap:5px;">
+        <input type="checkbox" id="c_cv_fam" name="c_cv_fam"/>
+        <label for="c_cv_fam">Family History of</label>
+        <input class="chk-txt-inline" type="text" id="c_cv_fam_txt" name="c_cv_fam_txt" placeholder="specify"/>
+      </div>
+
+      <span class="chk-section-head">Gastrointestinal</span>
+      <div class="chk-item"><input type="checkbox" id="c_appt" name="c_appt"/><label for="c_appt">Poor / Excessive Appetite</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_thirst" name="c_thirst"/><label for="c_thirst">Excessive Thirst</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_gas" name="c_gas"/><label for="c_gas">Gas / Bloating</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_col" name="c_col"/><label for="c_col">Colitis</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_crohn" name="c_crohn"/><label for="c_crohn">Crohn's</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_const" name="c_const"/><label for="c_const">Constipation</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_diarr" name="c_diarr"/><label for="c_diarr">Diarrhea</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_naus" name="c_naus"/><label for="c_naus">Nausea / Vomiting</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ulcer" name="c_ulcer"/><label for="c_ulcer">Ulcer</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_abcr" name="c_abcr"/><label for="c_abcr">Abdominal Cramps</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_gall" name="c_gall"/><label for="c_gall">Gall Bladder Problems</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_liver" name="c_liver"/><label for="c_liver">Liver Problems</label></div>
+
+      <span class="chk-section-head">EENT (Eyes, Ears, Nose, Throat)</span>
+      <div class="chk-item"><input type="checkbox" id="c_vis" name="c_vis"/><label for="c_vis">Vision Problems</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_dent" name="c_dent"/><label for="c_dent">Dental Problems</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_sth" name="c_sth"/><label for="c_sth">Sore Throat</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ear" name="c_ear"/><label for="c_ear">Ear Aches</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_hear" name="c_hear"/><label for="c_hear">Hearing Difficulty</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_ha2" name="c_ha2"/><label for="c_ha2">Hearing Aid</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_sinus" name="c_sinus"/><label for="c_sinus">Stuffed Nose / Sinus</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_allrg" name="c_allrg"/><label for="c_allrg">Allergies</label></div>
+      <div class="chk-item"><input type="checkbox" id="c_gland" name="c_gland"/><label for="c_gland">Swollen Glands</label></div>
+    </div>
+  </div><!-- /checklist-grid -->
+
+  <!-- ═══ CONSENT ═══ -->
+  <div class="section-head">Please Read &amp; Sign</div>
+  <div class="consent-box">
+    <ul>
+      <li>I attest that the information I have provided is true and complete to the best of my knowledge.</li>
+      <li>I understand the information I have provided on this form is confidential and will not be released without my written consent.</li>
+      <li>I understand that the therapist can end treatment at any time due to inappropriate behaviour.</li>
+      <li>I consent to a health assessment / reassessments and therapeutic massage treatment at ErinGlenWellness.</li>
+      <li>I authorize the therapist to contact my doctor or other health care professional listed above if required for treatment purposes.</li>
+      <li>I understand that all sessions include a pre-health assessment and change time.</li>
+      <li>I understand 24 hours notice is required to reschedule all future appointments, or full charges will apply.</li>
+      <li>I authorize my health file to be transferred to another ErinGlenWellness clinic if I relocate or a new clinic opens closer to my household.</li>
+    </ul>
+  </div>
+
+  <!-- ═══ SIGNATURE ═══ -->
+  <div class="final-row">
+    <div>
+      <div class="sig-wrap">
+        <div class="sig-label-row">Patient Signature</div>
+        <div class="sig-pad-box" id="sigPadBox">
+          <canvas id="sigCanvas"></canvas>
+          <div class="sig-watermark">Sign here…</div>
+        </div>
+        <div class="sig-controls">
+          <span class="sig-status" id="sigStatus"></span>
+          <button class="sig-clear-btn" type="button" onclick="clearSig()">Clear Signature</button>
+        </div>
+        <div class="sig-print-area" id="sigPrintArea">
+          <img id="sigPrintImg" alt="Signature"/>
+        </div>
+      </div>
+    </div>
+    <div>
+      <label class="fl">Today's Date</label>
+      <input type="date" id="signDate" name="signDate"/>
+      <div class="final-lbl" style="margin-top:8px;">Date</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- PROGRESS OVERLAY -->
+<div id="progress-overlay">
+  <div class="progress-card">
+    <h3 id="progressTitle">Generating PDF…</h3>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <div class="progress-msg" id="progressMsg">Please wait…</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════════════════════ -->
+<script>
+/* ── CONFIG ── */
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyKkSYohPOh6skAyrvM5JSwq_z8KAwRVyRWX0BMEFtTlFvvn9jYXcZT0TgV-x3Ju1Ufdg/exec'; // Paste your deployed Web App URL here
+const CLINIC_NAME     = 'ErinGlenWellness';
+
+/* ── TOAST ── */
+function toast(msg, dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+/* ── PROGRESS ── */
+function showProgress(title='Working…'){
+  document.getElementById('progressTitle').textContent=title;
+  document.getElementById('progressBar').style.width='0%';
+  document.getElementById('progressMsg').textContent='Please wait…';
+  document.getElementById('progress-overlay').classList.add('active');
+}
+function setProgress(pct,msg){
+  document.getElementById('progressBar').style.width=pct+'%';
+  if(msg) document.getElementById('progressMsg').textContent=msg;
+}
+function hideProgress(){ document.getElementById('progress-overlay').classList.remove('active'); }
+
+/* ════════════════════════════════
+   BODY DIAGRAM
+════════════════════════════════ */
+const markedMap = {}; // {svgId: Set of area names}
+
+document.querySelectorAll('.area-zone').forEach(zone => {
+  zone.addEventListener('click', function(){
+    const svg   = this.closest('svg');
+    const svgId = svg.id;
+    const area  = this.dataset.area;
+    if(!markedMap[svgId]) markedMap[svgId]=new Set();
+    const marksG = svg.querySelector('[id^="marks_"]');
+    const rect   = this.getBoundingClientRect();
+    const svgRect= svg.getBoundingClientRect();
+    // use zone x/y from viewBox attributes
+    const vx = parseFloat(this.getAttribute('x'));
+    const vy = parseFloat(this.getAttribute('y'));
+    const vw = parseFloat(this.getAttribute('width'));
+    const vh = parseFloat(this.getAttribute('height'));
+    const cx = vx + vw/2;
+    const cy = vy + vh/2;
+
+    // Toggle
+    const existing = marksG.querySelector(`[data-mark="${CSS.escape(area)}"]`);
+    if(existing){ existing.remove(); markedMap[svgId].delete(area); }
+    else {
+      const g = document.createElementNS('http://www.w3.org/2000/svg','text');
+      g.setAttribute('x', cx);
+      g.setAttribute('y', cy + 5);
+      g.setAttribute('text-anchor','middle');
+      g.setAttribute('class','x-mark');
+      g.setAttribute('data-mark', area);
+      g.textContent='✕';
+      marksG.appendChild(g);
+      markedMap[svgId].add(area);
+    }
+    updateMarkedAreas();
+  });
+});
+
+function updateMarkedAreas(){
+  const all = [];
+  Object.entries(markedMap).forEach(([id,set])=>{ set.forEach(a=>all.push(a)); });
+  document.getElementById('markedAreas').value = all.join(', ');
+}
+
+function clearAllMarks(){
+  document.querySelectorAll('[id^="marks_"]').forEach(g=>{ while(g.firstChild)g.removeChild(g.firstChild); });
+  Object.keys(markedMap).forEach(k=>markedMap[k]=new Set());
+  document.getElementById('markedAreas').value='';
+}
+
+/* ════════════════════════════════
+   SIGNATURE PAD
+════════════════════════════════ */
+const canvas   = document.getElementById('sigCanvas');
+const sigBox   = document.getElementById('sigPadBox');
+const ctx      = canvas.getContext('2d');
+const statusEl = document.getElementById('sigStatus');
+const printImg = document.getElementById('sigPrintImg');
+let drawing=false, lastX=0, lastY=0, hasMark=false;
+
+function resizeCanvas(){
+  const dpr  = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  const snap = hasMark ? canvas.toDataURL():null;
+  canvas.width  = Math.round(rect.width *dpr);
+  canvas.height = Math.round(rect.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  applyStyle();
+  if(snap){ const i=new Image(); i.onload=()=>ctx.drawImage(i,0,0,rect.width,rect.height); i.src=snap; }
+}
+function applyStyle(){ ctx.strokeStyle='#1c2b3a'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.lineJoin='round'; }
+function getPos(e){ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; }
+
+function startDraw(e){
+  e.preventDefault(); drawing=true;
+  const p=getPos(e); [lastX,lastY]=[p.x,p.y];
+  ctx.beginPath(); ctx.arc(p.x,p.y,.8,0,Math.PI*2); ctx.fillStyle='#1c2b3a'; ctx.fill();
+  applyStyle(); hasMark=true; sigBox.classList.add('has-sig');
+}
+function draw(e){
+  if(!drawing)return; e.preventDefault();
+  const p=getPos(e);
+  ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke();
+  [lastX,lastY]=[p.x,p.y];
+}
+function stopDraw(){ if(!drawing)return; drawing=false; captureSnapshot(); }
+function captureSnapshot(){ if(hasMark){ printImg.src=canvas.toDataURL('image/png'); statusEl.textContent='✓ Signature ready'; } }
+function clearSig(){ const r=canvas.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height); hasMark=false; drawing=false; sigBox.classList.remove('has-sig'); printImg.src=''; statusEl.textContent=''; }
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup',   stopDraw);
+canvas.addEventListener('mouseleave',stopDraw);
+canvas.addEventListener('touchstart',startDraw,{passive:false});
+canvas.addEventListener('touchmove', draw,     {passive:false});
+canvas.addEventListener('touchend',  stopDraw);
+
+function beforePrintHandler(){ if(hasMark) printImg.src=canvas.toDataURL('image/png'); }
+window.addEventListener('beforeprint',beforePrintHandler);
+if(window.matchMedia){ const m=window.matchMedia('print'); m.addEventListener('change',e=>{if(e.matches)beforePrintHandler();}); }
+window.addEventListener('load',  resizeCanvas);
+window.addEventListener('resize',()=>{ clearTimeout(window._rt); window._rt=setTimeout(resizeCanvas,120); });
+
+/* ════════════════════════════════
+   CLEAR ALL FIELDS
+════════════════════════════════ */
+function clearAllFields(){
+  if(!confirm('Clear all fields? This cannot be undone.'))return;
+  document.querySelectorAll('input[type=text],input[type=email],input[type=tel],input[type=date],textarea').forEach(el=>el.value='');
+  document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el=>el.checked=false);
+  clearSig(); clearAllMarks();
+}
+
+/* ════════════════════════════════
+   COLLECT FORM DATA
+════════════════════════════════ */
+function collectData(){
+  const d={};
+  // text/date/email/tel
+  document.querySelectorAll('input[type=text],input[type=email],input[type=tel],input[type=date],textarea').forEach(el=>{
+    if(el.id && el.id!=='markedAreas') d[el.id]=el.value;
+  });
+  d.markedAreas = document.getElementById('markedAreas').value;
+  // radios
+  document.querySelectorAll('input[type=radio]:checked').forEach(el=>{ d[el.name]=el.value; });
+  // checkboxes
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>{ d[el.id]=el.checked; });
+  // select elements
+  document.querySelectorAll('select').forEach(el=>{ if(el.id) d[el.id]=el.value; });
+  // signature
+  d.signature = hasMark ? canvas.toDataURL('image/png') : '';
+  return d;
+}
+
+/* ════════════════════════════════
+   GENERATE PDF (html2canvas + jsPDF)
+════════════════════════════════ */
+async function generatePDFBlob(){
+  // Ensure sig snapshot
+  if(hasMark) beforePrintHandler();
+
+  // Temporarily hide interactive elements, show print areas
+  const sigPad      = document.getElementById('sigPadBox');
+  const sigControls = document.querySelector('.sig-controls');
+  const sigPrint    = document.getElementById('sigPrintArea');
+  const toolbar     = document.querySelector('.toolbar');
+  const configNote  = document.getElementById('configNote');
+  const pageBreak   = document.querySelector('.page-break-marker');
+
+  // Store original placeholder attributes to restore later
+  const placeholderMap = new Map();
+  document.querySelectorAll('input[placeholder]').forEach(el => {
+    placeholderMap.set(el, el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', '');
+  });
+
+  const prev={
+    padD:    sigPad.style.display,
+    ctrlD:   sigControls.style.display,
+    prntD:   sigPrint.style.display,
+    toolD:   toolbar.style.display,
+    confD:   configNote ? configNote.style.display : 'block',
+    pbD:     pageBreak  ? pageBreak.style.display  : 'flex',
+  };
+
+  sigPad.style.display      = 'none';
+  sigControls.style.display = 'none';
+  sigPrint.style.display    = 'block';
+  toolbar.style.display     = 'none';
+  if(configNote) configNote.style.display='none';
+  if(pageBreak)  pageBreak.style.display ='none';
+
+  setProgress(20,'Rendering page…');
+  await new Promise(r=>setTimeout(r,100));
+
+  const formEl = document.getElementById('formPage');
+  const canvas2= await html2canvas(formEl,{
+    scale:2,
+    useCORS:true,
+    logging:false,
+    backgroundColor:'#ffffff',
+    allowTaint:true,
+    foreignObjectRendering:false,
+    windowHeight:formEl.scrollHeight,
+    windowWidth:formEl.scrollWidth,
+  });
+
+  setProgress(65,'Building PDF…');
+  await new Promise(r=>setTimeout(r,60));
+
+  const {jsPDF} = window.jspdf;
+  const imgData = canvas2.toDataURL('image/jpeg',0.92);
+  const pxW = canvas2.width, pxH = canvas2.height;
+  const ratio= pxH/pxW;
+  const pageW=210, pageH=Math.min(ratio*pageW, 297); // A4 width, proportional height
+  const pdf  = new jsPDF({ orientation: ratio>1?'p':'l', unit:'mm', format:'a4' });
+  const aW   = pdf.internal.pageSize.getWidth();
+  const aH   = pdf.internal.pageSize.getHeight();
+
+  // Multi-page if tall
+  const imgH = aW * ratio;
+  let posY=0, page=0;
+  while(posY < imgH){
+    if(page>0) pdf.addPage();
+    pdf.addImage(imgData,'JPEG',0,-posY,aW,imgH,undefined,'FAST');
+    posY+=aH; page++;
+  }
+
+  setProgress(90,'Finalising…');
+  await new Promise(r=>setTimeout(r,60));
+
+  // Restore placeholders
+  placeholderMap.forEach((placeholder, el) => {
+    el.setAttribute('placeholder', placeholder);
+  });
+
+  // Restore element visibility
+  sigPad.style.display      = prev.padD;
+  sigControls.style.display = prev.ctrlD;
+  sigPrint.style.display    = prev.prntD;
+  toolbar.style.display     = prev.toolD;
+  if(configNote) configNote.style.display=prev.confD;
+  if(pageBreak)  pageBreak.style.display =prev.pbD;
+
+  return pdf;
+}
+
+/* ════════════════════════════════
+   SAVE PDF LOCALLY
+════════════════════════════════ */
+async function savePDF(){
+  const name = (document.getElementById('fullName').value||'Patient').replace(/\s+/g,'_');
+  showProgress('Generating PDF…');
+  try{
+    const pdf = await generatePDFBlob();
+    setProgress(100,'Done!');
+    pdf.save(`HealthHistory_${name}.pdf`);
+    await new Promise(r=>setTimeout(r,500));
+    hideProgress();
+    toast('✓ PDF saved to your downloads folder');
+  }catch(err){
+    hideProgress();
+    console.error(err);
+    toast('⚠ PDF generation failed — try printing instead');
+  }
+}
+
+/* ════════════════════════════════
+   SUBMIT FORM → Google Apps Script
+════════════════════════════════ */
+async function submitForm(){
+  const name  = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const date  = document.getElementById('signDate').value;
+
+  if(!name){  toast('⚠ Please enter your full name');     document.getElementById('fullName').focus(); return; }
+  if(!email){ toast('⚠ Please enter your email address'); document.getElementById('email').focus();   return; }
+  if(!hasMark){ toast('⚠ Please sign the form before submitting'); return; }
+
+  if(GAS_ENDPOINT === 'YOUR_GOOGLE_APPS_SCRIPT_URL'){
+    toast('⚠ Google Apps Script URL not set — saving PDF locally instead', 5000);
+    await savePDF(); return;
+  }
+
+  showProgress('Preparing submission…');
+  try{
+    /* Step 1 – render PDF */
+    setProgress(10, 'Rendering PDF…');
+    const pdf    = await generatePDFBlob();
+    /* output as pure base64 (no data-URI prefix) — GAS will decode it */
+    const pdfB64 = pdf.output('datauristring').split(',')[1];
+
+    /* Step 2 – build payload */
+    setProgress(50, 'Sending to server…');
+    const data = collectData();
+    const payload = {
+      patientName  : name,
+      patientEmail : email,
+      submitDate   : date || new Date().toLocaleDateString('en-CA'),
+      markedAreas  : data.markedAreas || '',
+      pdfBase64    : pdfB64,          // pure base64 string
+      formSummary  : buildSummary(data),
+    };
+
+    /* Step 3 – POST to Google Apps Script (no-cors fetch) */
+    const res = await fetch(GAS_ENDPOINT, {
+      method : 'POST',
+      /* GAS doPost receives ContentType text/plain when using no-cors;
+         we send JSON as text so GAS can parse it */
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body   : JSON.stringify(payload),
+    });
+
+    setProgress(90, 'Finalising…');
+    await new Promise(r => setTimeout(r, 300));
+
+    /* GAS always returns 200 for deployed web apps; we treat any response as success */
+    setProgress(100, 'Done!');
+    hideProgress();
+    toast(`✓ Form submitted! ErinGlenWellness has been notified.`, 5500);
+
+    /* Also auto-download PDF for patient's records */
+    pdf.save(`HealthHistory_${name.replace(/\s+/g,'_')}.pdf`);
+
+  } catch(err){
+    hideProgress();
+    console.error('Submission error:', err);
+    toast('⚠ Could not reach server — PDF saved locally instead', 5000);
+    await savePDF();
+  }
+}
+
+/* Build a plain-text summary of checked items for the email body */
+function buildSummary(d){
+  const lines = [];
+  const add = (label, val) => { if(val && val !== false && val !== '') lines.push(`${label}: ${val}`); };
+
+  add('Patient Name', d.fullName);
+  add('Email', d.email);
+  add('Date of Birth', d.dob);
+  add('Age', d.age);
+  add('Phone (Cell)', d.phoneCell);
+  add('Phone (Home)', d.phoneHome);
+  add('Address', [d.addrStreet, d.addrUnit, d.addrCity, d.addrProv, d.addrPostal].filter(Boolean).join(', '));
+  add('Occupation', d.occupation);
+  add('Referral', d.referral);
+  add('Insurance', d.insurance);
+  add('Doctor', d.docName);
+  add('Last Check-up', d.lastCheckup);
+  add('Previous Massage', d.prevMassage);
+  add('Last Massage Date', d.lastMassage);
+  
+  // Primary Insurance
+  lines.push('');
+  lines.push('PRIMARY INSURANCE:');
+  add('Policy Holder', [d.ins1_ph_fname, d.ins1_ph_lname].filter(Boolean).join(' '));
+  add('Policy Number', d.ins1_policy_num);
+  add('Certificate/ID', d.ins1_cert_id);
+  add('DOB', d.ins1_dob);
+  add('Patient', [d.ins1_patient_fname, d.ins1_patient_lname].filter(Boolean).join(' '));
+  add('Relationship', d.ins1_relationship);
+  
+  // Secondary Insurance
+  if(d.hasSecondaryIns){
+    lines.push('');
+    lines.push('SECONDARY INSURANCE:');
+    add('Policy Holder', [d.ins2_ph_fname, d.ins2_ph_lname].filter(Boolean).join(' '));
+    add('Policy Number', d.ins2_policy_num);
+    add('Certificate/ID', d.ins2_cert_id);
+    add('DOB', d.ins2_dob);
+    add('Patient', [d.ins2_patient_fname, d.ins2_patient_lname].filter(Boolean).join(' '));
+    add('Relationship', d.ins2_relationship);
+  }
+  
+  lines.push('');
+  add('Medications', d.meds);
+  add('Illnesses/Ops', d.illnesses);
+  add('Allergies', d.allergies);
+  add('Family History', d.famHistory);
+  add('Accidents', d.accidents);
+  add('Other Conditions', d.otherConditions);
+  add('Areas Marked', d.markedAreas);
+
+  // Checked conditions
+  const checked = [];
+  document.querySelectorAll('input[type=checkbox]:checked').forEach(el => {
+    const lbl = document.querySelector(`label[for="${el.id}"]`);
+    if(lbl) checked.push(lbl.textContent.trim());
+  });
+  if(checked.length) lines.push('\nChecked Conditions:\n• ' + checked.join('\n• '));
+
+  // Lifestyle
+  ['ls_exercise','ls_water','ls_sleep','ls_eating'].forEach(name => {
+    const r = document.querySelector(`input[name="${name}"]:checked`);
+    if(r) lines.push(`${name.replace('ls_','').replace('_',' ')}: ${r.value}`);
+  });
+
+  return lines.join('\n');
+}
+
+/* ── auto-fill today's date ── */
+window.addEventListener('load',()=>{
+  const t=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('signDate').value=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+  
+  // Insurance section toggle
+  const hasSecondaryCheckbox = document.getElementById('hasSecondaryIns');
+  const secondaryInsSection = document.getElementById('secondaryInsSection');
+  
+  if(hasSecondaryCheckbox && secondaryInsSection){
+    hasSecondaryCheckbox.addEventListener('change', function(){
+      secondaryInsSection.style.display = this.checked ? 'block' : 'none';
+    });
+  }
+});
+</script>
+</body>
+</html>
