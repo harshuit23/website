@@ -268,7 +268,7 @@
     .sig-pad-box canvas {
       display: block;
       width: 100%;
-      height: 130px;
+      height: 60px;
       cursor: crosshair;
       touch-action: none;
     }
@@ -352,7 +352,7 @@
       border: 1.5px solid #09101d;
       border-radius: 2px;
       width: 100%;
-      height: 130px;
+      height: 60px;
       background: #fdfdfc;
     }
     .sig-print-area img {
@@ -405,9 +405,7 @@
     </div>
   </div>
 
-  <div class="instruction">
-    All categories under these notes will correspond to the hours allocated to you. If any task is left incomplete because you did not perform the required task, the full time will not be credited to your hours. To receive full credit for the hours, all tasks must be completed.
-  </div>
+ 
 
   <hr class="rule"/>
 
@@ -674,8 +672,17 @@
     statusEl.textContent = '';
   }
 
-  /* ── BEFORE PRINT: ensure snapshot is current ── */
+  /* ── BEFORE PRINT: ensure snapshot is current & remove placeholders ── */
+  let placeholderMap = new Map();
+  
   function beforePrintHandler() {
+    // Store and remove placeholder attributes
+    placeholderMap.clear();
+    document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
+      placeholderMap.set(el, el.getAttribute('placeholder'));
+      el.setAttribute('placeholder', '');
+    });
+    
     if (hasMark) {
       // Re-capture at full resolution right before browser renders the page
       printImg.src = canvas.toDataURL('image/png');
@@ -684,11 +691,22 @@
     }
   }
 
+  function afterPrintHandler() {
+    // Restore all placeholder attributes
+    placeholderMap.forEach((placeholder, el) => {
+      el.setAttribute('placeholder', placeholder);
+    });
+  }
+
   window.addEventListener('beforeprint', beforePrintHandler);
+  window.addEventListener('afterprint', afterPrintHandler);
   // matchMedia fallback for browsers that don't fire beforeprint reliably (e.g. some Chromium)
   if (window.matchMedia) {
     const mql = window.matchMedia('print');
-    mql.addEventListener('change', e => { if (e.matches) beforePrintHandler(); });
+    mql.addEventListener('change', e => { 
+      if (e.matches) beforePrintHandler(); 
+      else afterPrintHandler();
+    });
   }
 
   // Init + resize
